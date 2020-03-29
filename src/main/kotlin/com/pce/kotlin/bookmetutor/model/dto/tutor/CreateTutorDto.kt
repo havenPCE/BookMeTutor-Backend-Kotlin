@@ -10,6 +10,6 @@ class CreateTutorDto(
         val lastName: String?,
         val gender: String,
         val phone: String,
-        val address: CreateAddressDto,
-        val qualification: CreateQualificationDto
+        val address: CreateAddressDto?,
+        val qualification: CreateQualificationDto?
 )

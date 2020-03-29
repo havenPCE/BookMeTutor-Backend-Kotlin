@@ -65,6 +65,9 @@ data class Booking(
         @Column(name = "cancellation_reason")
         var cancellationReason: String?,
 
+        @Column(name = "rescheduling_reason")
+        var reschedulingReason: String?,
+
         @Enumerated(EnumType.STRING)
         @Column(name = "booking_status", nullable = false)
         var status: BookingStatus = BookingStatus.PENDING,
@@ -98,6 +101,7 @@ data class Booking(
             score = this.score,
             comment = this.comment,
             cancellationReason = this.cancellationReason,
+            reschedulingReason = this.reschedulingReason,
             status = this.status.name,
             invoice = this.invoice?.toDto(),
             studentName = "${this.student?.firstName} ${this.student?.lastName}",

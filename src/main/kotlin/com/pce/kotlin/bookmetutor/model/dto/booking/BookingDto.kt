@@ -21,6 +21,7 @@ data class BookingDto(
         val score: Int,
         val comment: String?,
         val cancellationReason: String?,
+        val reschedulingReason: String?,
         val status: String,
         val invoice: InvoiceDto?,
         val studentName: String?,

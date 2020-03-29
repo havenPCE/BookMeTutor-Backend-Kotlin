@@ -1,5 +1,8 @@
 package com.pce.kotlin.bookmetutor.model.dao
 
+import com.pce.kotlin.bookmetutor.model.dto.address.AddressDto
+import com.pce.kotlin.bookmetutor.model.dto.qualification.QualificationDto
+import com.pce.kotlin.bookmetutor.model.dto.tutor.TutorDto
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.Screening
 import java.time.LocalDateTime
@@ -54,7 +57,24 @@ data class Tutor(
         @OneToMany(mappedBy = "tutor", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
         var bookings: Set<Booking> = emptySet()
 
-)
+) {
+        fun toDto(): TutorDto? = TutorDto(
+                id = this.id,
+                email = this.email,
+                password = this.password,
+                firstName = this.firstName,
+                lastName = this.lastName,
+                gender = this.gender.name,
+                verified = this.verified,
+                screening = this.screening.name,
+                registered = this.registered,
+                lastPicked = this.lastPicked,
+                phones = this.phones.map { it },
+                address = this.address?.toDto(),
+                qualification = this.qualification?.toDto(),
+                bookings = this.bookings.mapNotNull { it.toDto() }
+        )
+}
 
 @Entity
 @Table(name = "tutor_address")
@@ -82,7 +102,16 @@ data class TutorAddress(
         @OneToOne(cascade = [CascadeType.ALL])
         @JoinColumn(referencedColumnName = "tutor_id")
         var tutor: Tutor?
-)
+) {
+        fun toDto(): AddressDto? = AddressDto(
+                id = this.id ?: -1,
+                line1 = this.line1,
+                line2 = this.line2,
+                landmark = this.landmark,
+                city = this.city,
+                pinCode = this.pinCode
+        )
+}
 
 @Entity
 @Table(name = "tutor_qualification")
@@ -105,4 +134,11 @@ data class TutorQualification(
         @JoinColumn(referencedColumnName = "tutor_id")
         var tutor: Tutor?
 
-)
+) {
+        fun toDto(): QualificationDto? = QualificationDto(
+                id = this.id ?: -1,
+                degree = this.degree,
+                board = this.board,
+                percentile = this.percentile
+        )
+}

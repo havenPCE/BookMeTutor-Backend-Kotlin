@@ -1,5 +1,7 @@
 package com.pce.kotlin.bookmetutor.model.dao
 
+import com.pce.kotlin.bookmetutor.model.dto.address.AddressDto
+import com.pce.kotlin.bookmetutor.model.dto.student.StudentDto
 import com.pce.kotlin.bookmetutor.util.Gender
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -42,7 +44,21 @@ data class Student(
 
         @OneToMany(mappedBy = "student", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
         var bookings: Set<Booking> = emptySet()
-)
+) {
+        fun toDto(): StudentDto? = StudentDto(
+                id = this.id ?: -1,
+                email = this.email,
+                password = this.password,
+                firstName = this.firstName,
+                lastName = this.lastName,
+                gender = this.gender.name,
+                verified = this.verified,
+                registered = this.registered,
+                phones = this.phones.map { it },
+                addresses = this.addresses.mapNotNull { it.toDto() },
+                bookings = this.bookings.mapNotNull { it.toDto() }
+        )
+}
 
 @Entity
 @Table(name = "student_address")
@@ -70,4 +86,13 @@ data class StudentAddress(
         @ManyToOne(cascade = [CascadeType.ALL])
         @JoinColumn(referencedColumnName = "student_id")
         var student: Student?
-)
+) {
+        fun toDto(): AddressDto? = AddressDto(
+                id = this.id ?: -1,
+                line1 = this.line1,
+                line2 = this.line2,
+                landmark = this.landmark,
+                city = this.city,
+                pinCode = this.pinCode
+        )
+}
