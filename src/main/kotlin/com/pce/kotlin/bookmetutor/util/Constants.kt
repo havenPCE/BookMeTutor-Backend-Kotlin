@@ -2,6 +2,8 @@ package com.pce.kotlin.bookmetutor.util
 
 object Constants {
     // Basic Constants
+    const val DEADLINE_HOURS = 3L
+    const val SECRET_OTP_LENGTH = 4
     const val SECRET = "SecretToEncrypt"
     const val TOKEN_PREFIX = "Bearer "
     const val HEADER_FIELD = "Authorization"
