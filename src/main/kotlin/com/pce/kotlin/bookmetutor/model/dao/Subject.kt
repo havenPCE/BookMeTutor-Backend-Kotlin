@@ -3,6 +3,7 @@ package com.pce.kotlin.bookmetutor.model.dao
 import com.pce.kotlin.bookmetutor.model.dto.subject.CreateSubjectDto
 import com.pce.kotlin.bookmetutor.model.dto.subject.SubjectDto
 import com.pce.kotlin.bookmetutor.model.dto.subject.UpdateSubjectDto
+import com.pce.kotlin.bookmetutor.util.SubjectName
 import javax.persistence.*
 
 @Entity
@@ -17,7 +18,7 @@ data class Subject(
         var classNumber: Int,
 
         @Column(name = "subject_name", nullable = false)
-        var subjectName: String,
+        var subjectName: SubjectName,
 
         @ElementCollection
         var topics: Set<String> = emptySet()
@@ -26,20 +27,20 @@ data class Subject(
     fun toDto(): SubjectDto? = SubjectDto(
             id = this.id ?: -1,
             classNumber = this.classNumber,
-            subjectName = this.subjectName,
+            subjectName = this.subjectName.name,
             topics = this.topics.map { it }
     )
 
     companion object Util {
         fun fromDto(dto: CreateSubjectDto): Subject = Subject(
                 classNumber = dto.classNumber,
-                subjectName = dto.subjectName,
+                subjectName = SubjectName.valueOf(dto.subjectName),
                 topics = dto.topics.toSet()
         )
 
         fun fromDto(dto: UpdateSubjectDto, subject: Subject): Subject = subject.copy(
                 classNumber = dto.classNumber ?: subject.classNumber,
-                subjectName = dto.subjectName ?: subject.subjectName,
+                subjectName = dto.subjectName?.let { SubjectName.valueOf(it) } ?: subject.subjectName,
                 topics = dto.topics?.toSet() ?: subject.topics
         )
     }
