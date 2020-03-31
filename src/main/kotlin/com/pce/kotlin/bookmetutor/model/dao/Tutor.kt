@@ -63,43 +63,43 @@ data class Tutor(
         var bookings: Set<Booking> = emptySet()
 
 ) {
-        fun toDto(): TutorDto? = TutorDto(
-                id = this.id,
-                email = this.email,
-                password = this.password,
-                firstName = this.firstName,
-                lastName = this.lastName,
-                gender = this.gender.name,
-                verified = this.verified,
-                screening = this.screening.name,
-                registered = this.registered,
-                lastPicked = this.lastPicked,
-                phones = this.phones.map { it },
-                address = this.address?.toDto(),
-                qualification = this.qualification?.toDto(),
-                bookings = this.bookings.mapNotNull { it.toDto() }
+    fun toDto(): TutorDto? = TutorDto(
+            id = this.id,
+            email = this.email,
+            password = this.password,
+            firstName = this.firstName,
+            lastName = this.lastName,
+            gender = this.gender.name,
+            verified = this.verified,
+            screening = this.screening.name,
+            registered = this.registered,
+            lastPicked = this.lastPicked,
+            phones = this.phones.map { it },
+            address = this.address?.toDto(),
+            qualification = this.qualification?.toDto(),
+            bookings = this.bookings.mapNotNull { it.toDto() }
+    )
+
+    companion object Util {
+        fun fromDto(dto: CreateTutorDto): Tutor = Tutor(
+                email = dto.email,
+                password = dto.password,
+                firstName = dto.firstName,
+                lastName = dto.lastName,
+                gender = Gender.valueOf(dto.gender),
+                registered = LocalDateTime.now(),
+                lastPicked = LocalDateTime.now(),
+                phones = setOf(dto.phone),
+                address = TutorAddress.fromDto(dto.address),
+                qualification = TutorQualification.fromDto(dto.qualification)
         )
 
-        companion object Util {
-                fun fromDto(dto: CreateTutorDto): Tutor = Tutor(
-                        email = dto.email,
-                        password = dto.password,
-                        firstName = dto.firstName,
-                        lastName = dto.lastName,
-                        gender = Gender.valueOf(dto.gender),
-                        registered = LocalDateTime.now(),
-                        lastPicked = LocalDateTime.now(),
-                        phones = setOf(dto.phone),
-                        address = TutorAddress.fromDto(dto.address),
-                        qualification = TutorQualification.fromDto(dto.qualification)
-                )
-
-                fun fromDto(dto: UpdateTutorDto, tutor: Tutor): Tutor = tutor.copy(
-                        password = dto.password ?: tutor.password,
-                        firstName = dto.firstName ?: tutor.firstName,
-                        lastName = dto.lastName ?: tutor.lastName
-                )
-        }
+        fun fromDto(dto: UpdateTutorDto, tutor: Tutor): Tutor = tutor.copy(
+                password = dto.password ?: tutor.password,
+                firstName = dto.firstName ?: tutor.firstName,
+                lastName = dto.lastName ?: tutor.lastName
+        )
+    }
 }
 
 @Entity
@@ -129,32 +129,32 @@ data class TutorAddress(
         @JoinColumn(referencedColumnName = "tutor_id")
         var tutor: Tutor? = null
 ) {
-        fun toDto(): AddressDto? = AddressDto(
-                id = this.id ?: -1,
-                line1 = this.line1,
-                line2 = this.line2,
-                landmark = this.landmark,
-                city = this.city,
-                pinCode = this.pinCode
+    fun toDto(): AddressDto? = AddressDto(
+            id = this.id ?: -1,
+            line1 = this.line1,
+            line2 = this.line2,
+            landmark = this.landmark,
+            city = this.city,
+            pinCode = this.pinCode
+    )
+
+    companion object Util {
+        fun fromDto(dto: CreateAddressDto): TutorAddress = TutorAddress(
+                line1 = dto.line1,
+                line2 = dto.line2,
+                landmark = dto.landmark,
+                city = dto.city,
+                pinCode = dto.pinCode
         )
 
-        companion object Util {
-                fun fromDto(dto: CreateAddressDto): TutorAddress = TutorAddress(
-                        line1 = dto.line1,
-                        line2 = dto.line2,
-                        landmark = dto.landmark,
-                        city = dto.city,
-                        pinCode = dto.pinCode
-                )
-
-                fun fromDto(dto: UpdateAddressDto, address: TutorAddress): TutorAddress = address.copy(
-                        line1 = dto.line1 ?: address.line1,
-                        line2 = dto.line2 ?: address.line2,
-                        landmark = dto.landmark ?: address.landmark,
-                        city = dto.city ?: address.city,
-                        pinCode = dto.pinCode ?: address.pinCode
-                )
-        }
+        fun fromDto(dto: UpdateAddressDto, address: TutorAddress): TutorAddress = address.copy(
+                line1 = dto.line1 ?: address.line1,
+                line2 = dto.line2 ?: address.line2,
+                landmark = dto.landmark ?: address.landmark,
+                city = dto.city ?: address.city,
+                pinCode = dto.pinCode ?: address.pinCode
+        )
+    }
 }
 
 @Entity
@@ -179,18 +179,18 @@ data class TutorQualification(
         var tutor: Tutor? = null
 
 ) {
-        fun toDto(): QualificationDto? = QualificationDto(
-                id = this.id ?: -1,
-                degree = this.degree,
-                board = this.board,
-                percentile = this.percentile
-        )
+    fun toDto(): QualificationDto? = QualificationDto(
+            id = this.id ?: -1,
+            degree = this.degree,
+            board = this.board,
+            percentile = this.percentile
+    )
 
-        companion object Util {
-                fun fromDto(dto: CreateQualificationDto): TutorQualification = TutorQualification(
-                        degree = dto.degree,
-                        board = dto.board,
-                        percentile = dto.percentile
-                )
-        }
+    companion object Util {
+        fun fromDto(dto: CreateQualificationDto): TutorQualification = TutorQualification(
+                degree = dto.degree,
+                board = dto.board,
+                percentile = dto.percentile
+        )
+    }
 }

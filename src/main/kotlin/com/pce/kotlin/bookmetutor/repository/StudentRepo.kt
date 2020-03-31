@@ -10,4 +10,5 @@ import javax.transaction.Transactional
 interface StudentRepo : JpaRepository<Student, Long> {
 
     fun findByEmail(email: String): Student?
+
 }

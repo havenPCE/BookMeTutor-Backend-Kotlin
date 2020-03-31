@@ -1,0 +1,68 @@
+package com.pce.kotlin.bookmetutor.service.impl
+
+import com.pce.kotlin.bookmetutor.model.dao.Booking
+import com.pce.kotlin.bookmetutor.model.dao.Student
+import com.pce.kotlin.bookmetutor.model.dao.Tutor
+import com.pce.kotlin.bookmetutor.model.dto.booking.CreateBookingDto
+import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
+import com.pce.kotlin.bookmetutor.repository.BookingRepo
+import com.pce.kotlin.bookmetutor.repository.StudentRepo
+import com.pce.kotlin.bookmetutor.repository.TutorRepo
+import com.pce.kotlin.bookmetutor.service.BookingService
+import com.pce.kotlin.bookmetutor.util.BookingStatus
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
+import javax.transaction.Transactional
+
+@Service
+@Transactional
+class JpaBookingService(val bookingRepo: BookingRepo, val studentRepo: StudentRepo, val tutorRepo: TutorRepo) : BookingService {
+    override fun createBooking(email: String, booking: CreateBookingDto): Booking {
+        val newBooking: Booking = Booking.fromDto(booking)
+        val student: Student? = studentRepo.findByEmail(email)
+        val tutor: Tutor? = tutorRepo.findFirstByEmailIsNotInOrderByLastPicked(newBooking.rejects.map { it })
+        return bookingRepo.save(newBooking.apply {
+            this.student = student
+            this.tutor = tutor
+        })
+    }
+
+    override fun updateBooking(id: Long, update: UpdateBookingDto): Booking? {
+        val booking: Booking? = bookingRepo.findByIdOrNull(id)
+        booking?.let {
+            return bookingRepo.save(Booking.fromDto(update, it))
+        }
+        return null
+    }
+
+    override fun removeBooking(id: Long): Boolean {
+        val booking: Booking? = bookingRepo.findByIdOrNull(id)
+        booking?.let {
+            bookingRepo.delete(booking)
+            return true
+        }
+        return false
+    }
+
+    override fun retrieveBooking(id: Long): Booking? {
+        return bookingRepo.findByIdOrNull(id)
+    }
+
+    override fun retrieveAllBookings(): List<Booking>? {
+        return bookingRepo.findAll()
+    }
+
+    override fun retrieveAllBookingsByStatus(status: BookingStatus): List<Booking>? {
+        return bookingRepo.findAllByStatus(status)
+    }
+
+    override fun assignBookingTutor(id: Long): Booking? {
+        val booking: Booking? = bookingRepo.findByIdOrNull(id)
+        val tutor: Tutor? = booking?.rejects?.map { it }?.let { tutorRepo.findFirstByEmailIsNotInOrderByLastPicked(it) }
+        tutor?.let {
+            booking.tutor = it
+            return bookingRepo.save(booking)
+        }
+        return null
+    }
+}

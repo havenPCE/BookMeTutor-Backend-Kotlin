@@ -5,6 +5,7 @@ import com.pce.kotlin.bookmetutor.model.dto.address.CreateAddressDto
 import com.pce.kotlin.bookmetutor.model.dto.address.UpdateAddressDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.BookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.CreateBookingDto
+import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
 import com.pce.kotlin.bookmetutor.model.dto.invoice.CreateInvoiceDto
 import com.pce.kotlin.bookmetutor.model.dto.invoice.InvoiceDto
 import com.pce.kotlin.bookmetutor.util.*
@@ -114,18 +115,32 @@ data class Booking(
             tutorEmail = this.tutor?.email
     )
 
-        companion object Util {
-                fun fromDto(dto: CreateBookingDto): Booking = Booking(
-                        subject = SubjectName.valueOf(dto.subject),
-                        topics = dto.topics.toSet(),
-                        classNumber = dto.classNumber,
-                        board = Board.valueOf(dto.board),
-                        address = BookingAddress.fromDto(dto.address),
-                        scheduledTime = dto.scheduledTime,
-                        deadline = dto.scheduledTime.minusHours(Constants.DEADLINE_HOURS),
-                        secret = RandomString.make(Constants.SECRET_OTP_LENGTH)
-                )
-        }
+    companion object Util {
+        fun fromDto(dto: CreateBookingDto): Booking = Booking(
+                subject = SubjectName.valueOf(dto.subject),
+                topics = dto.topics.toSet(),
+                classNumber = dto.classNumber,
+                board = Board.valueOf(dto.board),
+                address = BookingAddress.fromDto(dto.address),
+                scheduledTime = dto.scheduledTime,
+                deadline = dto.scheduledTime.minusHours(Constants.DEADLINE_HOURS),
+                secret = RandomString.make(Constants.SECRET_OTP_LENGTH)
+        )
+
+        fun fromDto(dto: UpdateBookingDto, booking: Booking): Booking = booking.copy(
+                topics = dto.topics?.toSet() ?: booking.topics,
+                scheduledTime = dto.scheduleTime ?: booking.scheduledTime,
+                startTime = dto.startTime ?: booking.startTime,
+                endTime = dto.endTime ?: booking.endTime,
+                rescheduled = dto.rescheduled ?: booking.rescheduled,
+                score = dto.score ?: booking.score,
+                comment = dto.comment ?: booking.comment,
+                cancellationReason = dto.cancellationReason ?: booking.cancellationReason,
+                reschedulingReason = dto.reschedulingReason ?: booking.reschedulingReason,
+                status = dto.status?.let { BookingStatus.valueOf(it) } ?: booking.status,
+                rejects = dto.reject?.let { booking.rejects.plus(it) } ?: booking.rejects
+        )
+    }
 }
 
 @Entity
@@ -157,32 +172,32 @@ data class BookingAddress(
 
 
 ) {
-        fun toDto(): AddressDto? = AddressDto(
-                id = this.id ?: -1,
-                line1 = this.line1,
-                line2 = this.line2,
-                landmark = this.landmark,
-                city = this.city,
-                pinCode = this.pinCode
+    fun toDto(): AddressDto? = AddressDto(
+            id = this.id ?: -1,
+            line1 = this.line1,
+            line2 = this.line2,
+            landmark = this.landmark,
+            city = this.city,
+            pinCode = this.pinCode
+    )
+
+    companion object Util {
+        fun fromDto(dto: CreateAddressDto): BookingAddress = BookingAddress(
+                line1 = dto.line1,
+                line2 = dto.line2,
+                landmark = dto.landmark,
+                city = dto.city,
+                pinCode = dto.pinCode
         )
 
-        companion object Util {
-                fun fromDto(dto: CreateAddressDto): BookingAddress = BookingAddress(
-                        line1 = dto.line1,
-                        line2 = dto.line2,
-                        landmark = dto.landmark,
-                        city = dto.city,
-                        pinCode = dto.pinCode
-                )
-
-                fun fromDto(dto: UpdateAddressDto, address: BookingAddress): BookingAddress = address.copy(
-                        line1 = dto.line1 ?: address.line1,
-                        line2 = dto.line2 ?: address.line2,
-                        landmark = dto.landmark ?: address.landmark,
-                        city = dto.city ?: address.city,
-                        pinCode = dto.pinCode ?: address.pinCode
-                )
-        }
+        fun fromDto(dto: UpdateAddressDto, address: BookingAddress): BookingAddress = address.copy(
+                line1 = dto.line1 ?: address.line1,
+                line2 = dto.line2 ?: address.line2,
+                landmark = dto.landmark ?: address.landmark,
+                city = dto.city ?: address.city,
+                pinCode = dto.pinCode ?: address.pinCode
+        )
+    }
 }
 
 
@@ -208,18 +223,18 @@ class Invoice(
         var booking: Booking? = null
 
 ) {
-        fun toDto(): InvoiceDto? = InvoiceDto(
-                id = this.id ?: -1,
-                method = this.method.name,
-                amount = this.amount,
-                summary = this.summary
-        )
+    fun toDto(): InvoiceDto? = InvoiceDto(
+            id = this.id ?: -1,
+            method = this.method.name,
+            amount = this.amount,
+            summary = this.summary
+    )
 
-        companion object Util {
-                fun fromDto(dto: CreateInvoiceDto): Invoice = Invoice(
-                        method = PaymentMethod.valueOf(dto.method),
-                        amount = dto.amount,
-                        summary = dto.summary
-                )
-        }
+    companion object Util {
+        fun fromDto(dto: CreateInvoiceDto): Invoice = Invoice(
+                method = PaymentMethod.valueOf(dto.method),
+                amount = dto.amount,
+                summary = dto.summary
+        )
+    }
 }

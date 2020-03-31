@@ -49,37 +49,37 @@ data class Student(
         @OneToMany(mappedBy = "student", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
         var bookings: Set<Booking> = emptySet()
 ) {
-        fun toDto(): StudentDto? = StudentDto(
-                id = this.id ?: -1,
-                email = this.email,
-                password = this.password,
-                firstName = this.firstName,
-                lastName = this.lastName,
-                gender = this.gender.name,
-                verified = this.verified,
-                registered = this.registered,
-                phones = this.phones.map { it },
-                addresses = this.addresses.mapNotNull { it.toDto() },
-                bookings = this.bookings.mapNotNull { it.toDto() }
+    fun toDto(): StudentDto? = StudentDto(
+            id = this.id ?: -1,
+            email = this.email,
+            password = this.password,
+            firstName = this.firstName,
+            lastName = this.lastName,
+            gender = this.gender.name,
+            verified = this.verified,
+            registered = this.registered,
+            phones = this.phones.map { it },
+            addresses = this.addresses.mapNotNull { it.toDto() },
+            bookings = this.bookings.mapNotNull { it.toDto() }
+    )
+
+    companion object Util {
+        fun fromDto(dto: CreateStudentDto): Student = Student(
+                email = dto.email,
+                password = dto.password,
+                firstName = dto.firstName,
+                lastName = dto.lastName,
+                gender = Gender.valueOf(dto.gender),
+                phones = setOf(dto.phone),
+                registered = LocalDateTime.now()
         )
 
-        companion object Util {
-                fun fromDto(dto: CreateStudentDto): Student = Student(
-                        email = dto.email,
-                        password = dto.password,
-                        firstName = dto.firstName,
-                        lastName = dto.lastName,
-                        gender = Gender.valueOf(dto.gender),
-                        phones = setOf(dto.phone),
-                        registered = LocalDateTime.now()
-                )
-
-                fun fromDto(dto: UpdateStudentDto, student: Student): Student = student.copy(
-                        password = dto.password ?: student.password,
-                        firstName = dto.firstName ?: student.firstName,
-                        lastName = dto.lastName ?: student.lastName
-                )
-        }
+        fun fromDto(dto: UpdateStudentDto, student: Student): Student = student.copy(
+                password = dto.password ?: student.password,
+                firstName = dto.firstName ?: student.firstName,
+                lastName = dto.lastName ?: student.lastName
+        )
+    }
 }
 
 @Entity
@@ -109,30 +109,30 @@ data class StudentAddress(
         @JoinColumn(referencedColumnName = "student_id")
         var student: Student? = null
 ) {
-        fun toDto(): AddressDto? = AddressDto(
-                id = this.id ?: -1,
-                line1 = this.line1,
-                line2 = this.line2,
-                landmark = this.landmark,
-                city = this.city,
-                pinCode = this.pinCode
+    fun toDto(): AddressDto? = AddressDto(
+            id = this.id ?: -1,
+            line1 = this.line1,
+            line2 = this.line2,
+            landmark = this.landmark,
+            city = this.city,
+            pinCode = this.pinCode
+    )
+
+    companion object Util {
+        fun fromDto(dto: CreateAddressDto): StudentAddress = StudentAddress(
+                line1 = dto.line1,
+                line2 = dto.line2,
+                landmark = dto.landmark,
+                city = dto.city,
+                pinCode = dto.pinCode
         )
 
-        companion object Util {
-                fun fromDto(dto: CreateAddressDto): StudentAddress = StudentAddress(
-                        line1 = dto.line1,
-                        line2 = dto.line2,
-                        landmark = dto.landmark,
-                        city = dto.city,
-                        pinCode = dto.pinCode
-                )
-
-                fun fromDto(dto: UpdateAddressDto, address: StudentAddress): StudentAddress = address.copy(
-                        line1 = dto.line1 ?: address.line1,
-                        line2 = dto.line2 ?: address.line2,
-                        landmark = dto.landmark ?: address.landmark,
-                        city = dto.city ?: address.city,
-                        pinCode = dto.pinCode ?: address.pinCode
-                )
-        }
+        fun fromDto(dto: UpdateAddressDto, address: StudentAddress): StudentAddress = address.copy(
+                line1 = dto.line1 ?: address.line1,
+                line2 = dto.line2 ?: address.line2,
+                landmark = dto.landmark ?: address.landmark,
+                city = dto.city ?: address.city,
+                pinCode = dto.pinCode ?: address.pinCode
+        )
+    }
 }
