@@ -10,6 +10,7 @@ object Constants {
     const val BASE_URL = "http://localhost:5000/"
 
     // Response Strings
+    const val UNAUTHORIZED = "Unauthorized Access (Invalid Token)"
     const val USER_NOT_FOUND = "user not found"
     const val TUTOR_NOT_FOUND = "tutor not found"
     const val BOOKING_NOT_FOUND = "booking not found"
@@ -57,4 +58,10 @@ enum class PaymentMethod {
     CREDIT_CARD,
     INTERNET_BANKING,
     UPI
+}
+
+enum class Authority {
+    STUDENT,
+    TUTOR,
+    ADMIN
 }

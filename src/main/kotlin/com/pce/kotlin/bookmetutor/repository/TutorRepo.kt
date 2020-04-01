@@ -11,6 +11,6 @@ interface TutorRepo : JpaRepository<Tutor, Long> {
 
     fun findByEmail(email: String): Tutor?
 
-    fun findFirstByEmailIsNotInOrderByLastPicked(listOfEmail: List<String>): Tutor?
+    fun findFirstByEmailNotInAndAddress_CityOrderByLastPickedAsc(rejectList: List<String>, city: String): Tutor?
 
 }

@@ -20,7 +20,10 @@ class JpaBookingService(val bookingRepo: BookingRepo, val studentRepo: StudentRe
     override fun createBooking(email: String, booking: CreateBookingDto): Booking {
         val newBooking: Booking = Booking.fromDto(booking)
         val student: Student? = studentRepo.findByEmail(email)
-        val tutor: Tutor? = tutorRepo.findFirstByEmailIsNotInOrderByLastPicked(newBooking.rejects.map { it })
+        val city: String? = newBooking.address?.city
+        val tutor: Tutor? = if (city != null) {
+            tutorRepo.findFirstByEmailNotInAndAddress_CityOrderByLastPickedAsc(newBooking.rejects.map { it }, city)
+        } else null
         return bookingRepo.save(newBooking.apply {
             this.student = student
             this.tutor = tutor
@@ -58,10 +61,13 @@ class JpaBookingService(val bookingRepo: BookingRepo, val studentRepo: StudentRe
 
     override fun assignBookingTutor(id: Long): Booking? {
         val booking: Booking? = bookingRepo.findByIdOrNull(id)
-        val tutor: Tutor? = booking?.rejects?.map { it }?.let { tutorRepo.findFirstByEmailIsNotInOrderByLastPicked(it) }
+        val list: List<String>? = booking?.rejects?.map { it }
+        val city: String? = booking?.address?.city
+        val tutor: Tutor? = if (list != null && city != null) {
+            tutorRepo.findFirstByEmailNotInAndAddress_CityOrderByLastPickedAsc(list, city)
+        } else null
         tutor?.let {
-            booking.tutor = it
-            return bookingRepo.save(booking)
+            return bookingRepo.save(booking!!.apply { this.tutor = it })
         }
         return null
     }

@@ -9,12 +9,13 @@ import com.pce.kotlin.bookmetutor.repository.TutorAddressRepo
 import com.pce.kotlin.bookmetutor.repository.TutorRepo
 import com.pce.kotlin.bookmetutor.service.TutorService
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
 @Transactional
-class JpaTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddressRepo) : TutorService {
+class JpaTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddressRepo, val encoder: BCryptPasswordEncoder) : TutorService {
     override fun retrieveAllTutors(): List<Tutor>? {
         return tutorRepo.findAll()
     }
@@ -24,7 +25,9 @@ class JpaTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddre
     }
 
     override fun createTutor(tutor: CreateTutorDto): Tutor {
-        return tutorRepo.save(Tutor.fromDto(tutor))
+        return tutorRepo.save(Tutor.fromDto(tutor).apply {
+            this.password = encoder.encode(this.password)
+        })
     }
 
     override fun updateTutor(email: String, update: UpdateTutorDto): Tutor? {
