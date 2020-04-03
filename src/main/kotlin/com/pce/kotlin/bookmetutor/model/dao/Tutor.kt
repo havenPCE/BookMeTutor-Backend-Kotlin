@@ -97,7 +97,8 @@ data class Tutor(
         fun fromDto(dto: UpdateTutorDto, tutor: Tutor): Tutor = tutor.copy(
                 password = dto.password ?: tutor.password,
                 firstName = dto.firstName ?: tutor.firstName,
-                lastName = dto.lastName ?: tutor.lastName
+                lastName = dto.lastName ?: tutor.lastName,
+                verified = dto.verified ?: tutor.verified
         )
     }
 }

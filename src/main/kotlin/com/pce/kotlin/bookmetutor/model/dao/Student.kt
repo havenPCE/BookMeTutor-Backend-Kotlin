@@ -77,7 +77,8 @@ data class Student(
         fun fromDto(dto: UpdateStudentDto, student: Student): Student = student.copy(
                 password = dto.password ?: student.password,
                 firstName = dto.firstName ?: student.firstName,
-                lastName = dto.lastName ?: student.lastName
+                lastName = dto.lastName ?: student.lastName,
+                verified = dto.verified ?: student.verified
         )
     }
 }

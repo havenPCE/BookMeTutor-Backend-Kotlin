@@ -18,10 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfiguration(@Qualifier("hybridDetailsService") val userDetailsService: UserDetailsService,
-                            val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
-                            val jwtRequestFilter: JwtRequestFilter,
-                            val encoder: BCryptPasswordEncoder) : WebSecurityConfigurerAdapter() {
+class SecurityConfiguration(@Qualifier("hybridDetailsService")
+                            private val userDetailsService: UserDetailsService,
+                            private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
+                            private val jwtRequestFilter: JwtRequestFilter,
+                            private val encoder: BCryptPasswordEncoder) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
                 .cors()
@@ -31,7 +32,7 @@ class SecurityConfiguration(@Qualifier("hybridDetailsService") val userDetailsSe
                 .antMatchers("/", "/account/**", "/subject/**").permitAll()
                 .antMatchers("/student/**").hasAnyAuthority(Authority.STUDENT.name, Authority.ADMIN.name)
                 .antMatchers("/tutor/**").hasAnyAuthority(Authority.TUTOR.name, Authority.ADMIN.name)
-                .antMatchers("/admin/**").hasAuthority(Authority.ADMIN.name)
+                .antMatchers("/bmt-admin/**").hasAuthority(Authority.ADMIN.name)
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

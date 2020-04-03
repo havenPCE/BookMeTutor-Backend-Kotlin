@@ -7,10 +7,10 @@ import javax.persistence.*
 data class Admin(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long?,
+        var id: Long? = null,
 
-        val email: String,
+        var email: String,
 
-        val password: String
+        var password: String
 
 )

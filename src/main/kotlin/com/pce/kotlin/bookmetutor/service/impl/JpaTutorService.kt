@@ -15,7 +15,10 @@ import javax.transaction.Transactional
 
 @Service
 @Transactional
-class JpaTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddressRepo, val encoder: BCryptPasswordEncoder) : TutorService {
+class JpaTutorService(private val tutorRepo: TutorRepo,
+                      private val tutorAddressRepo: TutorAddressRepo,
+                      private val encoder: BCryptPasswordEncoder) : TutorService {
+
     override fun retrieveAllTutors(): List<Tutor>? {
         return tutorRepo.findAll()
     }

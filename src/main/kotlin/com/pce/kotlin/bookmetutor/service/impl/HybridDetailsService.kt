@@ -12,7 +12,10 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
-class HybridDetailsService(private val studentService: StudentService, private val tutorService: TutorService, private val adminRepo: AdminRepo) : UserDetailsService {
+class HybridDetailsService(private val studentService: StudentService,
+                           private val tutorService: TutorService,
+                           private val adminRepo: AdminRepo) : UserDetailsService {
+
     override fun loadUserByUsername(username: String): UserDetails {
         adminRepo.findByEmail(username)?.let {
             return AdminDetails(it)

@@ -15,26 +15,29 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class JwtRequestFilter(@Qualifier("hybridDetailsService") val userDetailsService: UserDetailsService, val jwtTokenService: JwtTokenService) : OncePerRequestFilter() {
+class JwtRequestFilter(@Qualifier("hybridDetailsService") private val userDetailsService: UserDetailsService,
+                       private val jwtTokenService: JwtTokenService) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val tokenHeader: String? = request.getHeader(Constants.HEADER_FIELD)
 
         var userName: String? = null
-        val token: String?
+        var token: String? = null
 
         if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             token = tokenHeader.substring(7)
             userName = jwtTokenService.getUserNameFromToken(token)
         }
-        if (userName != null && SecurityContextHolder.getContext().authentication == null) {
+        if (userName != null && SecurityContextHolder.getContext().authentication == null && token != null) {
             val userDetails: UserDetails = userDetailsService.loadUserByUsername(userName)
-            val auth = UsernamePasswordAuthenticationToken(
-                    userDetails.username,
-                    userDetails.password,
-                    userDetails.authorities
-            )
-            auth.details = WebAuthenticationDetailsSource().buildDetails(request)
-            SecurityContextHolder.getContext().authentication = auth
+            if (jwtTokenService.validateToken(token, userDetails)) {
+                val auth = UsernamePasswordAuthenticationToken(
+                        userDetails.username,
+                        userDetails.password,
+                        userDetails.authorities
+                )
+                auth.details = WebAuthenticationDetailsSource().buildDetails(request)
+                SecurityContextHolder.getContext().authentication = auth
+            }
         }
         filterChain.doFilter(request, response)
     }

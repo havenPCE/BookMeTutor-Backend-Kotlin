@@ -16,9 +16,9 @@ import javax.transaction.Transactional
 
 @Service
 @Transactional
-class JpaStudentService(val studentRepo: StudentRepo,
-                        val studentAddressRepo: StudentAddressRepo,
-                        val encoder: BCryptPasswordEncoder) : StudentService {
+class JpaStudentService(private val studentRepo: StudentRepo,
+                        private val studentAddressRepo: StudentAddressRepo,
+                        private val encoder: BCryptPasswordEncoder) : StudentService {
 
     override fun retrieveAllStudents(): List<Student>? {
         return studentRepo.findAll()

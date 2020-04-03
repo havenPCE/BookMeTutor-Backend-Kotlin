@@ -14,11 +14,11 @@ import java.util.*
 
 @Service
 class TokenServiceImpl : JwtTokenService {
-    override fun getUserNameFromToken(token: String): String {
+    override fun getUserNameFromToken(token: String): String? {
         return getClaimsFromToken(token).subject
     }
 
-    override fun getExpirationDateFromToken(token: String): LocalDateTime {
+    override fun getExpirationDateFromToken(token: String): LocalDateTime? {
         return Instant.ofEpochMilli(getClaimsFromToken(token).expiration.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
 
@@ -35,7 +35,7 @@ class TokenServiceImpl : JwtTokenService {
                 .setClaims(emptyMap<String, Any>())
                 .setSubject(subject)
                 .setIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                .setExpiration(Date.from(LocalDateTime.now().plusHours(8).atZone(ZoneId.systemDefault()).toInstant()))
+                .setExpiration(Date.from(LocalDateTime.now().plusHours(Constants.EXPIRATION_TIME).atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SignatureAlgorithm.ES512, Constants.SECRET)
                 .compact()
     }

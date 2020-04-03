@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 interface JwtTokenService {
-    fun getUserNameFromToken(token: String): String
+    fun getUserNameFromToken(token: String): String?
 
-    fun getExpirationDateFromToken(token: String): LocalDateTime
+    fun getExpirationDateFromToken(token: String): LocalDateTime?
 
     fun getClaimsFromToken(token: String): Claims
 

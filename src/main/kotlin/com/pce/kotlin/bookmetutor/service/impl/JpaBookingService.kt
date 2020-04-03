@@ -16,7 +16,10 @@ import javax.transaction.Transactional
 
 @Service
 @Transactional
-class JpaBookingService(val bookingRepo: BookingRepo, val studentRepo: StudentRepo, val tutorRepo: TutorRepo) : BookingService {
+class JpaBookingService(private val bookingRepo: BookingRepo,
+                        private val studentRepo: StudentRepo,
+                        private val tutorRepo: TutorRepo) : BookingService {
+
     override fun createBooking(email: String, booking: CreateBookingDto): Booking {
         val newBooking: Booking = Booking.fromDto(booking)
         val student: Student? = studentRepo.findByEmail(email)
