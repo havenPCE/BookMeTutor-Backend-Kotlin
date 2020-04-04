@@ -7,7 +7,7 @@ import com.pce.kotlin.bookmetutor.util.BookingStatus
 
 interface BookingService {
 
-    fun createBooking(email: String, booking: CreateBookingDto): Booking
+    fun createBooking(email: String, booking: CreateBookingDto): Booking?
 
     fun updateBooking(id: Long, update: UpdateBookingDto): Booking?
 

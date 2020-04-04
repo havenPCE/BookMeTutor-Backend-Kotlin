@@ -17,3 +17,17 @@ fun makeResetRequest(email: String = "", token: String = "", role: Authority = A
             |<form action="${Constants.BASE_URL}/account/reset?email=${email}&jwt=${token}&role=${role.name}"><button type="submit">Confirm Reset</button></form></h4>
         """.trimMargin()
 )
+
+fun makeAcceptEmail() = Pair(
+        "Notice for acceptance of booking",
+        """
+            <h4> Thank you for accepting the booking </h4>
+        """.trimIndent()
+)
+
+fun makeRejectEmail() = Pair(
+        "Notice for available booking",
+        """
+            <h4> There is a new booking available for you.</h4>
+        """.trimIndent()
+)

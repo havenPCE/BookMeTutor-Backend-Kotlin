@@ -139,7 +139,10 @@ data class Booking(
                 reschedulingReason = dto.reschedulingReason ?: booking.reschedulingReason,
                 status = dto.status?.let { BookingStatus.valueOf(it) } ?: booking.status,
                 rejects = dto.reject?.let { booking.rejects.plus(it) } ?: booking.rejects
-        )
+        ).apply {
+            if (rescheduled)
+                deadline = scheduledTime.minusHours(Constants.DEADLINE_HOURS)
+        }
     }
 }
 

@@ -1,7 +1,6 @@
 package com.pce.kotlin.bookmetutor.service.impl
 
 import com.pce.kotlin.bookmetutor.model.dao.Booking
-import com.pce.kotlin.bookmetutor.model.dao.Student
 import com.pce.kotlin.bookmetutor.model.dao.Tutor
 import com.pce.kotlin.bookmetutor.model.dto.booking.CreateBookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
@@ -20,23 +19,29 @@ class JpaBookingService(private val bookingRepo: BookingRepo,
                         private val studentRepo: StudentRepo,
                         private val tutorRepo: TutorRepo) : BookingService {
 
-    override fun createBooking(email: String, booking: CreateBookingDto): Booking {
+    override fun createBooking(email: String, booking: CreateBookingDto): Booking? {
         val newBooking: Booking = Booking.fromDto(booking)
-        val student: Student? = studentRepo.findByEmail(email)
-        val city: String? = newBooking.address?.city
-        val tutor: Tutor? = if (city != null) {
-            tutorRepo.findFirstByEmailNotInAndAddress_CityOrderByLastPickedAsc(newBooking.rejects.map { it }, city)
-        } else null
-        return bookingRepo.save(newBooking.apply {
-            this.student = student
-            this.tutor = tutor
-        })
+        studentRepo.findByEmail(email)?.let { student ->
+            val city: String? = newBooking.address?.city
+            val tutor: Tutor? = if (city != null) {
+                tutorRepo.findFirstByEmailNotInAndAddress_CityOrderByLastPickedAsc(newBooking.rejects.map { it }, city)
+            } else null
+            tutor?.let {
+                return bookingRepo.save(newBooking.apply {
+                    this.student = student
+                    this.tutor = tutor
+                })
+            }
+        }
+        return null
     }
 
     override fun updateBooking(id: Long, update: UpdateBookingDto): Booking? {
         val booking: Booking? = bookingRepo.findByIdOrNull(id)
         booking?.let {
-            return bookingRepo.save(Booking.fromDto(update, it))
+            return if (it.rescheduled)
+                bookingRepo.save(Booking.fromDto(update.copy(scheduleTime = null), it))
+            else bookingRepo.save(Booking.fromDto(update, it))
         }
         return null
     }
