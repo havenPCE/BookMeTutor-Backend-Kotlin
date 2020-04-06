@@ -7,10 +7,7 @@ import com.pce.kotlin.bookmetutor.model.dto.util.Response
 import com.pce.kotlin.bookmetutor.service.BookingService
 import com.pce.kotlin.bookmetutor.service.EmailService
 import com.pce.kotlin.bookmetutor.service.TutorService
-import com.pce.kotlin.bookmetutor.util.BookingStatus
-import com.pce.kotlin.bookmetutor.util.Constants
-import com.pce.kotlin.bookmetutor.util.makeAcceptEmail
-import com.pce.kotlin.bookmetutor.util.makeRejectEmail
+import com.pce.kotlin.bookmetutor.util.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -83,7 +80,8 @@ class TutorController(val tutorService: TutorService, val bookingService: Bookin
                 emailService.sendMail(it.email, subject, text)
             } ?: run {
                 booking?.student?.let {
-                    emailService.sendMail(it.email, "Notice regarding booking", "Sorry for inconvenience, please issue a refund")
+                    val (subject, text) = makeApology()
+                    emailService.sendMail(it.email, subject, text)
                 }
             }
             ResponseEntity(Response(description = "booking rejected"), HttpStatus.OK)

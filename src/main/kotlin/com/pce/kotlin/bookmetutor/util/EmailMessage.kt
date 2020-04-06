@@ -31,3 +31,11 @@ fun makeRejectEmail() = Pair(
             <h4> There is a new booking available for you.</h4>
         """.trimIndent()
 )
+
+fun makeApology() = Pair(
+        "Notice for your booking",
+        """
+            <h4> We couldn't find a tutor for your booking. Sorry for the inconvenience.
+            Your amount will be refunded to your account shortly.</h4>
+        """.trimIndent()
+)
