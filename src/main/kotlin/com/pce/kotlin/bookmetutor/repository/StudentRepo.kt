@@ -1,14 +1,10 @@
 package com.pce.kotlin.bookmetutor.repository
 
 import com.pce.kotlin.bookmetutor.model.dao.Student
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
-import javax.transaction.Transactional
 
-@Repository
-@Transactional(Transactional.TxType.MANDATORY)
-interface StudentRepo : JpaRepository<Student, Long> {
-
+interface StudentRepo {
     fun findByEmail(email: String): Student?
-
+    fun save(student: Student): Student?
+    fun update(student: Student): Student?
+    fun deleteByEmail(email: String): Boolean
 }

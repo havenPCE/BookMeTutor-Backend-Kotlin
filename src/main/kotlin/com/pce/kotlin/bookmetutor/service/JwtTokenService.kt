@@ -1,7 +1,6 @@
 package com.pce.kotlin.bookmetutor.service
 
 import io.jsonwebtoken.Claims
-import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 interface JwtTokenService {
@@ -15,5 +14,5 @@ interface JwtTokenService {
 
     fun generate(subject: String): String
 
-    fun validateToken(token: String, userDetails: UserDetails): Boolean
+    fun validateToken(token: String): Boolean
 }

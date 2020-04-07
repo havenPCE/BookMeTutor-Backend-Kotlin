@@ -4,45 +4,33 @@ import com.pce.kotlin.bookmetutor.model.dto.subject.CreateSubjectDto
 import com.pce.kotlin.bookmetutor.model.dto.subject.SubjectDto
 import com.pce.kotlin.bookmetutor.model.dto.subject.UpdateSubjectDto
 import com.pce.kotlin.bookmetutor.util.SubjectName
-import javax.persistence.*
+import kotlin.random.Random
 
-@Entity
-@Table(name = "subject")
 data class Subject(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "subject_id", unique = true, nullable = false)
-        var id: Long? = null,
-
-        @Column(name = "class", nullable = false)
-        var classNumber: Int,
-
-        @Column(name = "subject_name", nullable = false)
-        var subjectName: SubjectName,
-
-        @ElementCollection
-        var topics: Set<String> = emptySet()
-
+        val id: Long = Random.nextLong(Long.MAX_VALUE),
+        val subjectName: SubjectName,
+        val classNumber: Int,
+        val topics: Set<String>
 ) {
-    fun toDto(): SubjectDto? = SubjectDto(
-            id = this.id ?: -1,
-            classNumber = this.classNumber,
+    fun toDto() = SubjectDto(
+            id = this.id,
             subjectName = this.subjectName.name,
-            topics = this.topics.map { it }
+            classNumber = this.classNumber,
+            topics = this.topics.toList()
     )
 
-    companion object Util {
-        fun fromDto(dto: CreateSubjectDto): Subject = Subject(
-                classNumber = dto.classNumber,
+    companion object {
+        fun fromDto(dto: CreateSubjectDto) = Subject(
                 subjectName = SubjectName.valueOf(dto.subjectName),
+                classNumber = dto.classNumber,
                 topics = dto.topics.toSet()
         )
 
-        fun fromDto(dto: UpdateSubjectDto, subject: Subject): Subject = subject.copy(
-                classNumber = dto.classNumber ?: subject.classNumber,
-                subjectName = dto.subjectName?.let { SubjectName.valueOf(it) } ?: subject.subjectName,
-                topics = dto.topics?.toSet() ?: subject.topics
+        fun fromDto(dto: UpdateSubjectDto, default: Subject) = Subject(
+                id = default.id,
+                subjectName = dto.subjectName?.let { SubjectName.valueOf(it) } ?: default.subjectName,
+                classNumber = dto.classNumber ?: default.classNumber,
+                topics = dto.topics?.toSet() ?: default.topics
         )
     }
-
 }

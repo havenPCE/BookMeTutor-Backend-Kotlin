@@ -1,16 +1,17 @@
 package com.pce.kotlin.bookmetutor.model.dao
 
-import javax.persistence.*
+import com.pce.kotlin.bookmetutor.model.dto.admin.CreateAdminDto
+import kotlin.random.Random
 
-@Entity
-@Table(name = "admin")
 data class Admin(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Long? = null,
-
-        var email: String,
-
-        var password: String
-
-)
+        val id: Long = Random.nextLong(Long.MAX_VALUE),
+        val email: String,
+        val password: String
+) {
+    companion object {
+        fun fromDto(dto: CreateAdminDto) = Admin(
+                email = dto.email,
+                password = dto.password
+        )
+    }
+}

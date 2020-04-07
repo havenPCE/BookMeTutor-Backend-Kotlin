@@ -1,10 +1,11 @@
 package com.pce.kotlin.bookmetutor.repository
 
 import com.pce.kotlin.bookmetutor.model.dao.Admin
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
 
-@Repository
-interface AdminRepo : JpaRepository<Admin, Long> {
+interface AdminRepo {
+    fun save(admin: Admin): Admin?
+    fun update(admin: Admin): Admin?
     fun findByEmail(email: String): Admin?
+    fun deleteByEmail(email: String): Boolean
+    fun findAll(): List<Admin>?
 }

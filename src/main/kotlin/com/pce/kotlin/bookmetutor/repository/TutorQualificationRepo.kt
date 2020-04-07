@@ -1,10 +1,10 @@
 package com.pce.kotlin.bookmetutor.repository
 
 import com.pce.kotlin.bookmetutor.model.dao.TutorQualification
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
-import javax.transaction.Transactional
 
-@Repository
-@Transactional(Transactional.TxType.MANDATORY)
-interface TutorQualificationRepo : JpaRepository<TutorQualification, Long>
+interface TutorQualificationRepo {
+    fun findById(id: Long): TutorQualification?
+    fun save(qualification: TutorQualification): TutorQualification?
+    fun update(qualification: TutorQualification): TutorQualification?
+    fun deleteById(id: Long): Boolean
+}
