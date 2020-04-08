@@ -7,5 +7,5 @@ interface AdminRepo {
     fun update(admin: Admin): Admin?
     fun findByEmail(email: String): Admin?
     fun deleteByEmail(email: String): Boolean
-    fun findAll(): List<Admin>?
+    fun findAll(): List<Admin>
 }

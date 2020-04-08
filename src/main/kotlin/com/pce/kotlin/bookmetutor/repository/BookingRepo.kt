@@ -7,5 +7,5 @@ interface BookingRepo {
     fun save(booking: Booking): Booking?
     fun update(booking: Booking): Booking?
     fun deleteById(id: Long): Boolean
-    fun findAll(): List<Booking>?
+    fun findAll(): List<Booking>
 }

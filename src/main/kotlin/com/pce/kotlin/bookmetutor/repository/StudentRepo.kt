@@ -7,4 +7,5 @@ interface StudentRepo {
     fun save(student: Student): Student?
     fun update(student: Student): Student?
     fun deleteByEmail(email: String): Boolean
+    fun findAll(): List<Student>
 }

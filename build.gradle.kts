@@ -24,8 +24,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc") {
+        exclude(group = "org.apache.tomcat", module = "tomcat-jdbc")
+    }
     implementation("org.postgresql:postgresql")
+    implementation("com.zaxxer:HikariCP:3.4.2")
 //    implementation("org.springframework.boot:spring-boot-starter-security")
 //    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-mail")

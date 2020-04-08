@@ -9,4 +9,5 @@ interface SubjectRepo {
     fun save(subject: Subject): Subject?
     fun update(subject: Subject): Subject?
     fun deleteById(id: Long): Boolean
+    fun findAll(): List<Subject>
 }

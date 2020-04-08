@@ -16,17 +16,20 @@ class BookmetutorApplicationTests {
 
 
     @Test
-    fun `The admin repo should save the admin and return same entity not null`() {
+    fun `Test for AdminRepo Methods`() {
         val admin = Admin(id = 5000, email = "def@gmail.com", password = "password")
         val updatedAdmin = admin.copy(password = "new-pass")
+        val falseAdmin = Admin(id = 420, email = "xyz@gmail.com", password = "password")
         assertAll(
                 {
-                    assertEquals("SAVE METHOD", admin, adminRepo.save(admin))
-                    assertEquals("FIND METHOD", admin, adminRepo.findByEmail(admin.email))
-                    assertEquals("UPDATE METHOD", updatedAdmin, adminRepo.update(updatedAdmin))
-                    assertEquals("FIND_ALL METHOD", true, adminRepo.findAll()?.contains(updatedAdmin))
-                    assertEquals("DELETE METHOD 404", false, adminRepo.deleteByEmail("xyz"))
-                    assertEquals("DELETE METHOD", true, adminRepo.deleteByEmail(admin.email))
+                    assertEquals("SAVE METHOD SUCCESS", admin, adminRepo.save(admin))
+                    assertEquals("SAVE METHOD FAILURE", null, adminRepo.save(admin))
+                    assertEquals("FIND METHOD SUCCESS", admin, adminRepo.findByEmail(admin.email))
+                    assertEquals("FIND METHOD FAILURE", null, adminRepo.findByEmail(falseAdmin.email))
+                    assertEquals("UPDATE METHOD SUCCESS", updatedAdmin, adminRepo.update(updatedAdmin))
+                    assertEquals("UPDATE METHOD FAILURE", null, adminRepo.update(falseAdmin))
+                    assertEquals("DELETE METHOD SUCCESS", true, adminRepo.deleteByEmail(admin.email))
+                    assertEquals("DELETE METHOD FAILURE", false, adminRepo.deleteByEmail(falseAdmin.email))
                 }
         )
     }

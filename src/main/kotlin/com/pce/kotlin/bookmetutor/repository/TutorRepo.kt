@@ -8,4 +8,5 @@ interface TutorRepo {
     fun save(tutor: Tutor): Tutor?
     fun update(tutor: Tutor): Tutor?
     fun deleteByEmail(email: String): Boolean
+    fun findAll(): List<Tutor>
 }

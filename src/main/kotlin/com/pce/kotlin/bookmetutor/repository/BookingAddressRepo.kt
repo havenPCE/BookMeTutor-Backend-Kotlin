@@ -7,5 +7,4 @@ interface BookingAddressRepo {
     fun save(address: BookingAddress): BookingAddress?
     fun update(address: BookingAddress): BookingAddress?
     fun deleteById(id: Long): Boolean
-    fun findAll(): List<BookingAddress>?
 }
