@@ -21,7 +21,7 @@ class TutorRowMapper : RowMapper<Tutor> {
                 lastPicked = rs.getTimestamp("last_picked"),
                 firstName = rs.getString("first_name"),
                 lastName = rs.getString("last_name"),
-                phones = (rs.getArray("phones").array as Array<String>).toMutableSet(),
+                phones = emptySet(),
                 registered = rs.getTimestamp("registered"),
                 screening = Screening.valueOf(rs.getString("screening")),
                 address = TutorAddress(

@@ -14,7 +14,7 @@ class SubjectRowMapper : RowMapper<Subject> {
                 id = rs.getLong("subject_id"),
                 subjectName = SubjectName.valueOf(rs.getString("subject_name")),
                 classNumber = rs.getInt("class_number"),
-                topics = (rs.getArray("topics").array as Array<String>).toMutableSet()
+                topics = emptySet()
         )
     }
 }

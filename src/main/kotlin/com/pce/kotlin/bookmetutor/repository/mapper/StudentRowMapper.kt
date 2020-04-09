@@ -17,7 +17,7 @@ class StudentRowMapper : RowMapper<Student> {
                 firstName = rs.getString("first_name"),
                 lastName = rs.getString("last_name"),
                 gender = Gender.valueOf(rs.getString("gender")),
-                phones = (rs.getArray("phones").array as Array<String>).toMutableSet(),
+                phones = emptySet(),
                 registered = rs.getTimestamp("registered"),
                 verified = rs.getBoolean("verified")
         )

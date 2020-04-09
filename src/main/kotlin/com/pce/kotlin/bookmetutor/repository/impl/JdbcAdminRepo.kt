@@ -3,62 +3,52 @@ package com.pce.kotlin.bookmetutor.repository.impl
 import com.pce.kotlin.bookmetutor.model.dao.Admin
 import com.pce.kotlin.bookmetutor.repository.AdminRepo
 import com.pce.kotlin.bookmetutor.repository.mapper.AdminRowMapper
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import com.pce.kotlin.bookmetutor.util.AdminQuery
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
-@Transactional(rollbackFor = [Throwable::class])
 @Repository
+@Transactional(rollbackFor = [Throwable::class])
 class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate, val adminRowMapper: AdminRowMapper) : AdminRepo {
 
     override fun save(admin: Admin): Admin? {
-        val insertSql = "INSERT INTO public.admin(admin_id, admin_email, admin_password) VALUES (:id, :email, :password);"
-        val insertParameter = MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password))
-        val selectSql = "SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_id = :id;"
-        val selectParameter = MapSqlParameterSource("id", admin.id)
+        val (insertQuery, insertParams) = AdminQuery.insert(admin)
 
         return try {
-            jdbcTemplate.update(insertSql, insertParameter)
-            jdbcTemplate.query(selectSql, selectParameter, adminRowMapper).firstOrNull()
+            jdbcTemplate.update(insertQuery, insertParams)
+            findByEmail(admin.email)
         } catch (e: Exception) {
             null
         }
     }
 
     override fun update(admin: Admin): Admin? {
-        val updateSql = """UPDATE public.admin SET admin_id=:id, admin_email=:email, admin_password=:password WHERE admin_id = :id;"""
-        val updateParameter = MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password))
-        val selectSql = """SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_id = :id;"""
-        val selectParameter = MapSqlParameterSource("id", admin.id)
-
+        val (updateQuery, updateParams) = AdminQuery.update(admin)
         return try {
-            jdbcTemplate.update(updateSql, updateParameter)
-            return jdbcTemplate.query(selectSql, selectParameter, adminRowMapper).firstOrNull()
+            jdbcTemplate.update(updateQuery, updateParams)
+            findByEmail(admin.email)
         } catch (e: Exception) {
             null
         }
-
     }
 
     override fun findByEmail(email: String): Admin? {
-        val selectSql = """SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_email = :email;"""
-        val selectParameter = MapSqlParameterSource("email", email)
-        return jdbcTemplate.query(selectSql, selectParameter, adminRowMapper).firstOrNull()
+        val (selectQuery, selectParams) = AdminQuery.selectByEmail(email)
+        return jdbcTemplate.query(selectQuery, selectParams, adminRowMapper).firstOrNull()
     }
 
     override fun deleteByEmail(email: String): Boolean {
-        val deleteSql = """DELETE FROM public.admin WHERE admin_email = :email;"""
-        val deleteParameter = MapSqlParameterSource("email", email)
+        val (deleteQuery, deleteParams) = AdminQuery.deleteByEmail(email)
         return try {
-            jdbcTemplate.update(deleteSql, deleteParameter) != 0
+            jdbcTemplate.update(deleteQuery, deleteParams) > 0
         } catch (e: Exception) {
             false
         }
     }
 
     override fun findAll(): List<Admin> {
-        val selectSql = "SELECT admin_id, admin_email, admin_password FROM public.admin;"
-        return jdbcTemplate.query(selectSql, adminRowMapper)
+        val selectQuery = "SELECT admin_id, admin_email, admin_password FROM public.admin;"
+        return jdbcTemplate.query(selectQuery, adminRowMapper)
     }
 }
