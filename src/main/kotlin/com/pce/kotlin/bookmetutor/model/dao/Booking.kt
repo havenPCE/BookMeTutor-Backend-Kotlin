@@ -7,7 +7,7 @@ import com.pce.kotlin.bookmetutor.util.Board
 import com.pce.kotlin.bookmetutor.util.BookingStatus
 import com.pce.kotlin.bookmetutor.util.Constants
 import com.pce.kotlin.bookmetutor.util.nextString
-import java.util.*
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 data class Booking(
@@ -19,12 +19,12 @@ data class Booking(
         val rescheduled: Boolean = false,
         val reschedulingReason: String? = null,
         val comment: String? = null,
-        val deadline: Date,
-        val scheduledTime: Date,
+        val deadline: LocalDateTime,
+        val scheduledTime: LocalDateTime,
         val score: Int = 0,
         val secret: String = Random.nextString(length = Constants.SECRET_OTP_LENGTH),
-        val startTime: Date? = null,
-        val endTime: Date? = null,
+        val startTime: LocalDateTime? = null,
+        val endTime: LocalDateTime? = null,
         val status: BookingStatus = BookingStatus.PENDING,
         val subject: String,
         val topics: Set<String> = mutableSetOf(),
@@ -61,7 +61,7 @@ data class Booking(
                 classNumber = dto.classNumber,
                 address = BookingAddress.fromDto(dto.address),
                 scheduledTime = dto.scheduledTime,
-                deadline = Date(dto.scheduledTime.time - Constants.DEADLINE_HOURS),
+                deadline = dto.scheduledTime.minusHours(Constants.DEADLINE_HOURS),
                 invoice = Invoice.fromDto(dto.invoice)
         )
 

@@ -5,7 +5,7 @@ import com.pce.kotlin.bookmetutor.model.dto.tutor.TutorDto
 import com.pce.kotlin.bookmetutor.model.dto.tutor.UpdateTutorDto
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.Screening
-import java.util.*
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 data class Tutor(
@@ -13,11 +13,11 @@ data class Tutor(
         val email: String,
         val password: String,
         val gender: Gender,
-        val lastPicked: Date = Date(),
+        val lastPicked: LocalDateTime = LocalDateTime.now(),
         val firstName: String,
         val lastName: String? = null,
         val phones: Set<String> = mutableSetOf(),
-        val registered: Date = Date(),
+        val registered: LocalDateTime = LocalDateTime.now(),
         val screening: Screening = Screening.PENDING,
         val verified: Boolean = false,
         val address: TutorAddress? = null,

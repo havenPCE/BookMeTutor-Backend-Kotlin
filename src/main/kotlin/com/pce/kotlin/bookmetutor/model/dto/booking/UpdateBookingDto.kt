@@ -1,13 +1,13 @@
 package com.pce.kotlin.bookmetutor.model.dto.booking
 
-import java.util.*
+import java.time.LocalDateTime
 
 
 data class UpdateBookingDto(
         val topics: List<String>?,
-        val scheduleTime: Date?,
-        val startTime: Date?,
-        val endTime: Date?,
+        val scheduleTime: LocalDateTime?,
+        val startTime: LocalDateTime?,
+        val endTime: LocalDateTime?,
         val rescheduled: Boolean?,
         val score: Int?,
         val comment: String?,

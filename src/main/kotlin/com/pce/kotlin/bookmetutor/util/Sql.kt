@@ -90,12 +90,22 @@ object StudentAddressQuery {
             """DELETE FROM public.student_address WHERE address_id = :id""",
             MapSqlParameterSource("id", id)
     )
+
+    fun selectByStudentId(studentId: Long) = Pair(
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.student_address WHERE student_id = :studentId;""",
+            MapSqlParameterSource("studentId", studentId)
+    )
 }
 
 object BookingAddressQuery {
     fun selectById(id: Long) = Pair(
             """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.booking_address WHERE address_id = :id;""",
             MapSqlParameterSource("id", id)
+    )
+
+    fun selectByBookingId(bookingId: Long) = Pair(
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.booking_address WHERE booking_id = :bookingId;""",
+            MapSqlParameterSource("bookingId", bookingId)
     )
 
     fun insert(bookingId: Long, address: BookingAddress) = Pair(
@@ -134,6 +144,11 @@ object TutorAddressQuery {
             """DELETE FROM public.tutor_address WHERE address_id = :id""",
             MapSqlParameterSource("id", id)
     )
+
+    fun selectByTutorId(tutorId: Long) = Pair(
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.tutor_address WHERE tutor_id = :tutorId;""",
+            MapSqlParameterSource("tutorId", tutorId)
+    )
 }
 
 object TutorQualificationQuery {
@@ -156,6 +171,11 @@ object TutorQualificationQuery {
             """DELETE FROM public.tutor_qualification WHERE qualification_id = :id;""",
             MapSqlParameterSource("id", id)
     )
+
+    fun selectByTutorId(tutorId: Long) = Pair(
+            """SELECT qualification_id, degree, university, percentile FROM public.tutor_qualification WHERE tutor_id = :tutorId;""",
+            MapSqlParameterSource("tutorId", tutorId)
+    )
 }
 
 object InvoiceQuery {
@@ -177,5 +197,102 @@ object InvoiceQuery {
     fun deleteById(id: Long) = Pair(
             """DELETE FROM public.booking_invoice WHERE invoice_id = :id;""",
             MapSqlParameterSource("id", id)
+    )
+
+    fun selectByBookingId(bookingId: Long) = Pair(
+            """SELECT invoice_id, amount, method, summary FROM public.booking_invoice WHERE booking_id = :bookingId;""",
+            MapSqlParameterSource("bookingId", bookingId)
+    )
+}
+
+object BookingQuery {
+    fun selectById(id: Long) = Pair(
+            """SELECT booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject FROM public.booking WHERE booking_id = :id;""",
+            MapSqlParameterSource("id", id)
+    )
+
+    fun selectReject(id: Long) = Pair(
+            """SELECT reject FROM public.booking_reject WHERE booking_id = :id""",
+            MapSqlParameterSource("id", id)
+    )
+
+    fun selectTopic(id: Long) = Pair(
+            """SELECT topic FROM public.booking_topic WHERE booking_id = :id""",
+            MapSqlParameterSource("id", id)
+    )
+
+    fun selectByStudentId(studentId: Long) = Pair(
+            """SELECT booking_id FROM public.booking WHERE student_id = :studentId""",
+            MapSqlParameterSource("studentId", studentId)
+    )
+
+    fun selectByTutorId(tutorId: Long) = Pair(
+            """SELECT booking_id FROM public.booking WHERE tutor_id = :tutorId""",
+            MapSqlParameterSource("tutorId", tutorId)
+    )
+
+    fun insertIntoBooking(studentId: Long, tutorId: Long, booking: Booking) = Pair(
+            """INSERT INTO public.booking(booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, tutor_id, student_id) 
+                VALUES (:id,:board,:cancellationReason,:classNumber,:rescheduled,:reschedulingReason,:comment,:deadline,:scheduledTime,:score,:secret,:startTime,:endTime,:status,:subject,:tutorId,:studentId);""".trimIndent(),
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to booking.id,
+                    "board" to booking.board.name,
+                    "cancellationReason" to booking.cancellationReason,
+                    "classNumber" to booking.classNumber,
+                    "rescheduled" to booking.rescheduled,
+                    "reschedulingReason" to booking.reschedulingReason,
+                    "comment" to booking.comment,
+                    "deadline" to booking.deadline,
+                    "scheduledTime" to booking.scheduledTime,
+                    "score" to booking.score,
+                    "secret" to booking.secret,
+                    "startTime" to booking.startTime,
+                    "endTime" to booking.endTime,
+                    "status" to booking.status.name,
+                    "subject" to booking.subject,
+                    "tutorId" to tutorId,
+                    "studentId" to studentId
+            ))
+    )
+
+    fun insertIntoReject(bookingId: Long) = """INSERT INTO public.booking_reject(booking_id, reject) VALUES (${bookingId}, :reject);"""
+    fun deleteFromReject(bookingId: Long) = Pair(
+            """DELETE FROM public.booking_reject WHERE booking_id = :bookingId""",
+            MapSqlParameterSource("bookingId", bookingId)
+    )
+
+    fun insertIntoTopic(bookingId: Long) = """INSERT INTO public.booking_topic(booking_id, topic) VALUES (${bookingId}, :topic);"""
+    fun deleteFromTopic(bookingId: Long) = Pair(
+            """DELETE FROM public.booking_topic WHERE booking_id = :bookingId""",
+            MapSqlParameterSource("bookingId", bookingId)
+    )
+
+    fun deleteById(bookingId: Long) = Pair(
+            """DELETE FROM public.booking WHERE booking_id = :bookingId""",
+            MapSqlParameterSource("bookingId", bookingId)
+    )
+
+    fun updateBooking(tutorId: Long, booking: Booking) = Pair(
+            """UPDATE public.booking
+                SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId
+	            WHERE booking_id = :id;""".trimIndent(),
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to booking.id,
+                    "board" to booking.board.name,
+                    "cancellationReason" to booking.cancellationReason,
+                    "classNumber" to booking.classNumber,
+                    "rescheduled" to booking.rescheduled,
+                    "reschedulingReason" to booking.reschedulingReason,
+                    "comment" to booking.comment,
+                    "deadline" to booking.deadline,
+                    "scheduledTime" to booking.scheduledTime,
+                    "score" to booking.score,
+                    "secret" to booking.secret,
+                    "startTime" to booking.startTime,
+                    "endTime" to booking.endTime,
+                    "status" to booking.status.name,
+                    "subject" to booking.subject,
+                    "tutorId" to tutorId
+            ))
     )
 }

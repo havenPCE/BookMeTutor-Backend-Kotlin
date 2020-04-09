@@ -7,4 +7,5 @@ interface InvoiceRepo {
     fun save(bookingId: Long, invoice: Invoice): Invoice?
     fun update(invoice: Invoice): Invoice?
     fun deleteById(id: Long): Boolean
+    fun findByBookingId(bookingId: Long): Invoice?
 }

@@ -7,4 +7,5 @@ interface TutorAddressRepo {
     fun save(tutorId: Long, address: TutorAddress): TutorAddress?
     fun update(address: TutorAddress): TutorAddress?
     fun deleteById(id: Long): Boolean
+    fun findByTutorId(tutorId: Long): TutorAddress?
 }

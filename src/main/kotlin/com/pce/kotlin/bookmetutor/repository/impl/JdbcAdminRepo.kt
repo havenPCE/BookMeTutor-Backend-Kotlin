@@ -2,15 +2,23 @@ package com.pce.kotlin.bookmetutor.repository.impl
 
 import com.pce.kotlin.bookmetutor.model.dao.Admin
 import com.pce.kotlin.bookmetutor.repository.AdminRepo
-import com.pce.kotlin.bookmetutor.repository.mapper.AdminRowMapper
 import com.pce.kotlin.bookmetutor.util.AdminQuery
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.sql.ResultSet
 
 @Repository
 @Transactional(rollbackFor = [Throwable::class])
-class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate, val adminRowMapper: AdminRowMapper) : AdminRepo {
+class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : AdminRepo {
+
+    val adminRowMapper: (ResultSet, Int) -> Admin = { rs, _ ->
+        Admin(
+                id = rs.getLong("admin_id"),
+                email = rs.getString("admin_email"),
+                password = rs.getString("admin_password")
+        )
+    }
 
     override fun save(admin: Admin): Admin? {
         val (insertQuery, insertParams) = AdminQuery.insert(admin)

@@ -4,7 +4,7 @@ import com.pce.kotlin.bookmetutor.model.dto.student.CreateStudentDto
 import com.pce.kotlin.bookmetutor.model.dto.student.StudentDto
 import com.pce.kotlin.bookmetutor.model.dto.student.UpdateStudentDto
 import com.pce.kotlin.bookmetutor.util.Gender
-import java.util.*
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 data class Student(
@@ -15,7 +15,7 @@ data class Student(
         val lastName: String?,
         val gender: Gender,
         val phones: Set<String> = mutableSetOf(),
-        val registered: Date = Date(),
+        val registered: LocalDateTime = LocalDateTime.now(),
         val verified: Boolean = false,
         val addresses: Set<StudentAddress> = mutableSetOf(),
         val bookings: Set<Booking> = mutableSetOf()

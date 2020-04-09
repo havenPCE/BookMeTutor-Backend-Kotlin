@@ -7,4 +7,5 @@ interface TutorQualificationRepo {
     fun save(tutorId: Long, qualification: TutorQualification): TutorQualification?
     fun update(qualification: TutorQualification): TutorQualification?
     fun deleteById(id: Long): Boolean
+    fun findByTutorId(tutorId: Long): TutorQualification?
 }

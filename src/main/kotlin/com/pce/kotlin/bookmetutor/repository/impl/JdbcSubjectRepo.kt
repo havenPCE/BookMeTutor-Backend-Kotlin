@@ -2,8 +2,6 @@ package com.pce.kotlin.bookmetutor.repository.impl
 
 import com.pce.kotlin.bookmetutor.model.dao.Subject
 import com.pce.kotlin.bookmetutor.repository.SubjectRepo
-import com.pce.kotlin.bookmetutor.repository.mapper.SubjectRowMapper
-import com.pce.kotlin.bookmetutor.repository.mapper.TopicRowMapper
 import com.pce.kotlin.bookmetutor.util.SubjectName
 import com.pce.kotlin.bookmetutor.util.SubjectQuery
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -11,10 +9,22 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.sql.ResultSet
 
 @Repository
 @Transactional(rollbackFor = [Throwable::class])
-class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate, val subjectRowMapper: SubjectRowMapper, val topicRowMapper: TopicRowMapper) : SubjectRepo {
+class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRepo {
+
+    val subjectRowMapper: (ResultSet, Int) -> Subject = { rs, _ ->
+        Subject(
+                id = rs.getLong("subject_id"),
+                subjectName = SubjectName.valueOf(rs.getString("subject_name")),
+                classNumber = rs.getInt("class_number"),
+                topics = emptySet()
+        )
+    }
+    val topicRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("topic") }
+
     override fun findById(id: Long): Subject? {
         val (selectFromSubjectQuery, selectFromSubjectParams) = SubjectQuery.selectByIdFromSubject(id)
         val (selectFromTopicQuery, selectFromTopicParams) = SubjectQuery.selectByIdFromTopic(id)

@@ -2,7 +2,7 @@ package com.pce.kotlin.bookmetutor.model.dto.booking
 
 import com.pce.kotlin.bookmetutor.model.dto.address.AddressDto
 import com.pce.kotlin.bookmetutor.model.dto.invoice.InvoiceDto
-import java.util.*
+import java.time.LocalDateTime
 
 data class BookingDto(
         val id: Long?,
@@ -12,10 +12,10 @@ data class BookingDto(
         val classNumber: Int,
         val board: String,
         val address: AddressDto?,
-        val scheduleTime: Date,
-        val deadline: Date,
-        val startTime: Date?,
-        val endTime: Date?,
+        val scheduleTime: LocalDateTime,
+        val deadline: LocalDateTime,
+        val startTime: LocalDateTime?,
+        val endTime: LocalDateTime?,
         val rescheduled: Boolean,
         val secret: String,
         val score: Int,
