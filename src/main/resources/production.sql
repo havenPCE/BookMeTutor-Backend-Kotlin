@@ -1,0 +1,31 @@
+--Enable FK
+ALTER TABLE public.admin
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.booking
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.booking_address
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.booking_invoice
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.booking_reject
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.booking_topic
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.student
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.student_address
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.student_phone
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.subject
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.subject_topic
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.tutor
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.tutor_address
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.tutor_phone
+    ENABLE TRIGGER ALL;
+ALTER TABLE public.tutor_qualification
+    ENABLE TRIGGER ALL;

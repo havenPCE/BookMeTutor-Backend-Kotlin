@@ -20,11 +20,6 @@ object AdminQuery {
             MapSqlParameterSource("email", email)
     )
 
-    fun selectById(id: Long) = Pair(
-            "SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_id = :id;",
-            MapSqlParameterSource("id", id)
-    )
-
     fun selectByEmail(email: String) = Pair(
             "SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_email = :email;",
             MapSqlParameterSource("email", email)
@@ -190,7 +185,7 @@ object InvoiceQuery {
     )
 
     fun update(invoice: Invoice) = Pair(
-            """UPDATE public.booking_invoice SET amount=:amount, method=:method, summary=:summary, WHERE invoice_id = :id;""",
+            """UPDATE public.booking_invoice SET amount=:amount, method=:method, summary=:summary WHERE invoice_id = :id;""",
             MapSqlParameterSource(mutableMapOf("id" to invoice.id, "amount" to invoice.amount, "method" to invoice.method.name, "summary" to invoice.summary))
     )
 
@@ -272,7 +267,7 @@ object BookingQuery {
             MapSqlParameterSource("bookingId", bookingId)
     )
 
-    fun updateBooking(tutorId: Long, booking: Booking) = Pair(
+    fun updateBookingWithTutor(tutorId: Long, booking: Booking) = Pair(
             """UPDATE public.booking
                 SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId
 	            WHERE booking_id = :id;""".trimIndent(),
@@ -293,6 +288,148 @@ object BookingQuery {
                     "status" to booking.status.name,
                     "subject" to booking.subject,
                     "tutorId" to tutorId
+            ))
+    )
+
+    fun updateBooking(booking: Booking) = Pair(
+            """UPDATE public.booking
+                        SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject
+                        WHERE booking_id = :id;""".trimIndent(),
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to booking.id,
+                    "board" to booking.board.name,
+                    "cancellationReason" to booking.cancellationReason,
+                    "classNumber" to booking.classNumber,
+                    "rescheduled" to booking.rescheduled,
+                    "reschedulingReason" to booking.reschedulingReason,
+                    "comment" to booking.comment,
+                    "deadline" to booking.deadline,
+                    "scheduledTime" to booking.scheduledTime,
+                    "score" to booking.score,
+                    "secret" to booking.secret,
+                    "startTime" to booking.startTime,
+                    "endTime" to booking.endTime,
+                    "status" to booking.status.name,
+                    "subject" to booking.subject
+            ))
+    )
+}
+
+object StudentQuery {
+    fun selectByEmailFromStudent(email: String) = Pair(
+            """SELECT student_id, email, password, first_name, last_name, gender, registered, verified FROM public.student WHERE email = :email""",
+            MapSqlParameterSource("email", email)
+    )
+
+    fun selectPhone(studentId: Long) = Pair(
+            """SELECT phone FROM public.student_phone WHERE student_id = :studentId""",
+            MapSqlParameterSource("studentId", studentId)
+    )
+
+    fun deleteByEmail(email: String) = Pair(
+            """DELETE FROM public.student WHERE email = :email;""",
+            MapSqlParameterSource("email", email)
+    )
+
+    fun insertIntoStudent(student: Student) = Pair(
+            """INSERT INTO public.student(student_id, email, password, first_name, last_name, gender, registered, verified) VALUES (:id,:email,:password,:firstName,:lastName,:gender,:registered,:verified);""",
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to student.id,
+                    "email" to student.email,
+                    "firstName" to student.firstName,
+                    "lastName" to student.lastName,
+                    "gender" to student.gender,
+                    "registered" to student.registered,
+                    "verified" to student.verified
+            ))
+    )
+
+    fun insertIntoPhone(studentId: Long) = """INSERT INTO public.student_phone(student_id, phone) VALUES (${studentId},:phone)"""
+
+    fun updateStudent(student: Student) = Pair(
+            """UPDATE public.student SET password=:password, first_name=:firstName, last_name=:lastName, gender=:gender, registered=:registered, verified=:verified WHERE student_id = :id;""",
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to student.id,
+                    "password" to student.password,
+                    "firstName" to student.firstName,
+                    "lastName" to student.lastName,
+                    "gender" to student.gender.name,
+                    "registered" to student.registered,
+                    "verified" to student.verified
+            ))
+    )
+
+    fun deletePhone(studentId: Long) = Pair(
+            """DELETE FROM public.student_phone WHERE student_id = :studentId""",
+            MapSqlParameterSource("studentId", studentId)
+    )
+}
+
+object TutorQuery {
+    fun selectByEmail(email: String) = Pair(
+            """SELECT tutor_id, tutor_email, tutor_password, gender, last_picked, first_name, last_name, registered, screening, verified FROM public.tutor WHERE tutor_email = :email;""",
+            MapSqlParameterSource("email", email)
+    )
+
+    fun selectPhone(tutorId: Long) = Pair(
+            """SELECT phone FROM public.tutor_phone WHERE tutor_id = :tutorId;""",
+            MapSqlParameterSource("tutorId", tutorId)
+    )
+
+    fun selectByRequirement(gender: Gender, city: String, rejects: List<String>) = Pair(
+            if (rejects.isNotEmpty()) {
+                """SELECT t.tutor_email FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city AND t.tutor_email NOT IN (:rejects) ORDER BY t.last_picked ASC LIMIT 1;"""
+            } else {
+                """SELECT t.tutor_email FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city ORDER BY t.last_picked ASC LIMIT 1;"""
+            }
+            ,
+            MapSqlParameterSource(mutableMapOf(
+                    "gender" to gender.name,
+                    "city" to city,
+                    "rejects" to rejects
+            ))
+    )
+
+    fun deleteByEmail(email: String) = Pair(
+            """DELETE FROM public.tutor WHERE tutor_email = :email;""",
+            MapSqlParameterSource("email", email)
+    )
+
+    fun insertIntoTutor(tutor: Tutor) = Pair(
+            """INSERT INTO public.tutor(tutor_id, tutor_email, tutor_password, gender, last_picked, first_name, last_name, registered, screening, verified) 
+                |VALUES (:id,:email,:password,:gender,:lastPicked,:firstName,:lastName,:registered,:screening,:verified);""".trimMargin(),
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to tutor.id,
+                    "email" to tutor.email,
+                    "password" to tutor.password,
+                    "gender" to tutor.gender.name,
+                    "lastPicked" to tutor.lastPicked,
+                    "firstName" to tutor.firstName,
+                    "lastName" to tutor.lastName,
+                    "registered" to tutor.registered,
+                    "screening" to tutor.screening.name,
+                    "verified" to tutor.verified
+            ))
+    )
+
+    fun insertPhone(tutorId: Long) = """INSERT INTO public.tutor_phone(tutor_id, phone) VALUES (${tutorId}, :phone)"""
+    fun deletePhone(tutorId: Long) = Pair(
+            """DELETE FROM public.tutor_phone WHERE tutor_id = :tutorId""",
+            MapSqlParameterSource("tutorId", tutorId)
+    )
+
+    fun updateTutor(tutor: Tutor) = Pair(
+            """UPDATE public.tutor SET tutor_password=:password, gender=:gender, last_picked=:lastPicked, first_name=:firstName, last_name=:lastName, registered=:registered, screening=:screening, verified=:verified WHERE tutor_id = :id;""".trimMargin(),
+            MapSqlParameterSource(mutableMapOf(
+                    "id" to tutor.id,
+                    "password" to tutor.password,
+                    "gender" to tutor.gender.name,
+                    "lastPicked" to tutor.lastPicked,
+                    "firstName" to tutor.firstName,
+                    "lastName" to tutor.lastName,
+                    "registered" to tutor.registered,
+                    "screening" to tutor.screening.name,
+                    "verified" to tutor.verified
             ))
     )
 }

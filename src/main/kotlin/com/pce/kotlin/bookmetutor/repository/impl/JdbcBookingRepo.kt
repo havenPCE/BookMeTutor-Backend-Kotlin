@@ -32,9 +32,9 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
                 deadline = rs.getTimestamp("deadline").toLocalDateTime(),
                 scheduledTime = rs.getTimestamp("scheduled_time").toLocalDateTime(),
                 score = rs.getInt("score"),
-                secret = rs.getString("score"),
-                startTime = rs.getTimestamp("start_time").toLocalDateTime(),
-                endTime = rs.getTimestamp("end_time").toLocalDateTime(),
+                secret = rs.getString("secret"),
+                startTime = rs.getTimestamp("start_time")?.toLocalDateTime(),
+                endTime = rs.getTimestamp("end_time")?.toLocalDateTime(),
                 status = BookingStatus.valueOf(rs.getString("status")),
                 subject = rs.getString("subject"),
                 topics = emptySet()
@@ -69,14 +69,15 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
             jdbcTemplate.batchUpdate(insertTopicQuery, insertTopicParams)
             booking.address?.let { bookingAddressRepo.save(booking.id, it) }
             booking.invoice?.let { invoiceRepo.save(booking.id, it) }
-            booking
+            findById(booking.id)
         } catch (e: Exception) {
             null
         }
     }
 
-    override fun update(tutorId: Long, booking: Booking): Booking? {
-        val (updateBookingQuery, updateBookingParams) = BookingQuery.updateBooking(tutorId, booking)
+    override fun update(booking: Booking, tutorId: Long?): Booking? {
+        val (updateBookingQuery, updateBookingParams) = tutorId?.let { BookingQuery.updateBookingWithTutor(it, booking) }
+                ?: BookingQuery.updateBooking(booking)
         val (deleteTopicQuery, deleteTopicParams) = BookingQuery.deleteFromTopic(booking.id)
         val (deleteRejectQuery, deleteRejectParams) = BookingQuery.deleteFromReject(booking.id)
         val insertRejectQuery = BookingQuery.insertIntoReject(booking.id)
@@ -91,7 +92,7 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
             jdbcTemplate.batchUpdate(insertTopicQuery, insertTopicParams)
             booking.address?.let { bookingAddressRepo.update(it) }
             booking.invoice?.let { invoiceRepo.update(it) }
-            booking
+            findById(booking.id)
         } catch (e: java.lang.Exception) {
             null
         }
@@ -105,8 +106,7 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
     override fun findAll(): List<Booking> {
         val selectQuery = """SELECT booking_id FROM public.booking;"""
         return jdbcTemplate.query(selectQuery, bookingIdRowMapper)
-                .map { findById(it) }
-                .mapNotNull { it }
+                .mapNotNull { findById(it) }
     }
 
     override fun findByStudentId(studentId: Long): List<Booking> {

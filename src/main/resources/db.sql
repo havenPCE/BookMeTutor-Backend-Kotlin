@@ -285,7 +285,7 @@ CREATE TABLE public.tutor
     last_picked    timestamp without time zone       NOT NULL,
     first_name     text COLLATE pg_catalog."default" NOT NULL,
     last_name      text COLLATE pg_catalog."default",
-    registered     date                              NOT NULL,
+    registered     timestamp without time zone       NOT NULL,
     screening      text COLLATE pg_catalog."default" NOT NULL,
     verified       boolean                           NOT NULL,
     CONSTRAINT tutor_pk PRIMARY KEY (tutor_id),
