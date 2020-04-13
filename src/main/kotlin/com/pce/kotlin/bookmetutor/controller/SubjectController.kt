@@ -12,43 +12,43 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/subjects")
-class SubjectController(val subjectService: SubjectService) {
+class SubjectController(val subjectService: SubjectService) : HandlesError() {
 
     @PostMapping("")
-    fun createSubject(@RequestBody dto: CreateSubjectDto): ResponseEntity<Response> {
+    fun createSubject(@RequestBody dto: CreateSubjectDto): ResponseEntity<out Response> {
         subjectService.createSubject(dto)?.let {
-            return response(status = HttpStatus.OK, description = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
         }
-        return response(status = HttpStatus.INTERNAL_SERVER_ERROR, description = TASK_FAILED)
+        return response(status = HttpStatus.INTERNAL_SERVER_ERROR, message = TASK_FAILED)
     }
 
     @GetMapping("")
-    fun retrieveAllSubject(): ResponseEntity<Response> {
+    fun retrieveAllSubject(): ResponseEntity<out Response> {
         val subjects: List<SubjectDto> = subjectService.retrieveAllSubjects().map { it.toDto() }
-        return response(status = HttpStatus.OK, description = SUBJECT_INFO, payload = subjects)
+        return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = subjects)
     }
 
-    @GetMapping(params = ["classNumber", "subjectName"])
-    fun retrieveSubject(@RequestParam classNumber: Int, @RequestParam subjectName: String): ResponseEntity<Response> {
+    @GetMapping(value = [""], params = ["classNumber", "subjectName"])
+    fun retrieveSubject(@RequestParam classNumber: Int, @RequestParam subjectName: String): ResponseEntity<out Response> {
         subjectService.retrieveSubject(classNumber, subjectName)?.let {
-            return response(status = HttpStatus.OK, description = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
         }
-        return response(status = HttpStatus.NOT_FOUND, description = SUBJECT_NOT_FOUND)
+        return response(status = HttpStatus.NOT_FOUND, message = SUBJECT_NOT_FOUND)
     }
 
     @PutMapping("/{id}")
-    fun updateSubject(@PathVariable id: Long, @RequestBody dto: UpdateSubjectDto): ResponseEntity<Response> {
+    fun updateSubject(@PathVariable id: Long, @RequestBody dto: UpdateSubjectDto): ResponseEntity<out Response> {
         subjectService.updateSubject(id, dto)?.let {
-            return response(status = HttpStatus.OK, description = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
         }
-        return response(status = HttpStatus.NOT_FOUND, description = SUBJECT_NOT_FOUND)
+        return response(status = HttpStatus.NOT_FOUND, message = SUBJECT_NOT_FOUND)
     }
 
     @DeleteMapping("/{id}")
-    fun removeSubject(@PathVariable id: Long): ResponseEntity<Response> {
+    fun removeSubject(@PathVariable id: Long): ResponseEntity<out Response> {
         return if (subjectService.removeSubject(id)) {
-            response(status = HttpStatus.OK, description = TASK_SUCCESSFUL)
-        } else response(status = HttpStatus.NOT_FOUND, description = SUBJECT_NOT_FOUND)
+            response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
+        } else response(status = HttpStatus.NOT_FOUND, message = SUBJECT_NOT_FOUND)
     }
 
 }

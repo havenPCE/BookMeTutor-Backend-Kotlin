@@ -1,5 +1,9 @@
 package com.pce.kotlin.bookmetutor.model.dto.util
 
-data class Response(val description: String, val payload: Any?) {
-    constructor(description: String) : this(description, null)
-}
+import java.time.LocalDateTime
+
+interface Response
+
+data class PayloadResponse(val message: String, val timestamp: LocalDateTime = LocalDateTime.now(), val payload: Any) : Response
+
+data class EmptyResponse(val message: String, val timestamp: LocalDateTime = LocalDateTime.now()) : Response

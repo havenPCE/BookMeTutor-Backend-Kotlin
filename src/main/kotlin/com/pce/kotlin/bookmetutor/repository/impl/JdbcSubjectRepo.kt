@@ -23,6 +23,7 @@ class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRep
                 topics = emptySet()
         )
     }
+    val subjectIdRowMapper: (ResultSet, Int) -> Long = { rs, _ -> rs.getLong("subject_id") }
     val topicRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("topic") }
 
     override fun findById(id: Long): Subject? {
@@ -85,8 +86,8 @@ class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRep
     }
 
     override fun findAll(): List<Subject> {
-        val selectQuery = "SELECT subject_id, subject_name, class_number, topics FROM public.subject;"
-        return jdbcTemplate.query(selectQuery, subjectRowMapper)
+        val selectQuery = "SELECT subject_id FROM public.subject;"
+        return jdbcTemplate.query(selectQuery, subjectIdRowMapper).mapNotNull { findById(it) }
     }
 
     fun createTopicParams(topics: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(topics.map { mutableMapOf("topic" to it) }.toTypedArray())

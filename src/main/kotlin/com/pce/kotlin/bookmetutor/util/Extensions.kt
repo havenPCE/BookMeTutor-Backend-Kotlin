@@ -1,6 +1,7 @@
 package com.pce.kotlin.bookmetutor.util
 
-import com.pce.kotlin.bookmetutor.model.dto.util.Response
+import com.pce.kotlin.bookmetutor.model.dto.util.EmptyResponse
+import com.pce.kotlin.bookmetutor.model.dto.util.PayloadResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import kotlin.random.Random
@@ -13,4 +14,6 @@ fun Random.nextString(length: Int = 10): String {
             .joinToString("")
 }
 
-fun response(status: HttpStatus, description: String, payload: Any? = null) = ResponseEntity(Response(description = description, payload = payload), status)
+fun response(status: HttpStatus, message: String, payload: Any? = null) =
+        payload?.let { ResponseEntity(PayloadResponse(message = message, payload = it), status) }
+                ?: ResponseEntity(EmptyResponse(message = message), status)
