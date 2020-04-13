@@ -12,7 +12,7 @@ data class Student(
         val email: String,
         val password: String,
         val firstName: String,
-        val lastName: String?,
+        val lastName: String? = null,
         val gender: Gender,
         val phones: Set<String> = mutableSetOf(),
         val registered: LocalDateTime = LocalDateTime.now(),

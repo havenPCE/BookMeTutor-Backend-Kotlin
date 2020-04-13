@@ -4,11 +4,11 @@ import io.jsonwebtoken.Claims
 import java.time.LocalDateTime
 
 interface JwtTokenService {
-    fun getUserNameFromToken(token: String): String?
+    fun retrieveUserNameFromToken(token: String): String?
 
-    fun getExpirationDateFromToken(token: String): LocalDateTime?
+    fun retrieveExpirationDateFromToken(token: String): LocalDateTime?
 
-    fun getClaimsFromToken(token: String): Claims
+    fun retrieveClaimsFromToken(token: String): Claims
 
     fun isTokenExpired(token: String): Boolean
 

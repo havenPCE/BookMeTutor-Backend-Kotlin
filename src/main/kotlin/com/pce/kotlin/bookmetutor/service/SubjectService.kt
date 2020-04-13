@@ -5,9 +5,9 @@ import com.pce.kotlin.bookmetutor.model.dto.subject.CreateSubjectDto
 import com.pce.kotlin.bookmetutor.model.dto.subject.UpdateSubjectDto
 
 interface SubjectService {
-    fun retrieveAllSubjects(): List<Subject>?
+    fun retrieveAllSubjects(): List<Subject>
     fun retrieveSubject(classNumber: Int, subjectName: String): Subject?
     fun createSubject(dto: CreateSubjectDto): Subject?
-    fun removeSubject(id: Long)
+    fun removeSubject(id: Long): Boolean
     fun updateSubject(id: Long, update: UpdateSubjectDto): Subject?
 }

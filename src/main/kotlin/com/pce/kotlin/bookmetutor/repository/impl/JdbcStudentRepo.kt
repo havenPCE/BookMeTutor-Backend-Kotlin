@@ -72,8 +72,6 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
             jdbcTemplate.update(updateStudentQuery, updateStudentParams)
             jdbcTemplate.update(deletePhoneQuery, deletePhoneParams)
             jdbcTemplate.batchUpdate(insertPhoneQuery, insertPhoneParams)
-            student.addresses.map { studentAddressRepo.update(it) }
-            student.bookings.map { bookingRepo.update(it) }
             findByEmail(student.email)
         } catch (e: Exception) {
             null

@@ -7,13 +7,13 @@ import com.pce.kotlin.bookmetutor.model.dto.tutor.CreateTutorDto
 import com.pce.kotlin.bookmetutor.model.dto.tutor.UpdateTutorDto
 
 interface TutorService {
-    fun retrieveAllTutors(): List<Tutor>?
+    fun retrieveAllTutors(): List<Tutor>
 
     fun retrieveTutor(email: String): Tutor?
 
-    fun createTutor(tutor: CreateTutorDto): Tutor
+    fun createTutor(dto: CreateTutorDto): Tutor?
 
-    fun updateTutor(email: String, update: UpdateTutorDto): Tutor?
+    fun updateTutor(email: String, dto: UpdateTutorDto): Tutor?
 
     fun removeTutor(email: String): Boolean
 
@@ -21,5 +21,5 @@ interface TutorService {
 
     fun removeTutorPhone(email: String, phone: String): Tutor?
 
-    fun updateTutorAddress(id: Long, update: UpdateAddressDto): TutorAddress?
+    fun updateTutorAddress(id: Long, dto: UpdateAddressDto): TutorAddress?
 }

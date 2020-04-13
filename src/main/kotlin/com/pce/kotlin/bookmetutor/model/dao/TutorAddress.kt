@@ -31,7 +31,7 @@ data class TutorAddress(
                 pinCode = dto.pinCode
         )
 
-        fun fromDto(dto: UpdateAddressDto, default: BookingAddress) = TutorAddress(
+        fun fromDto(dto: UpdateAddressDto, default: TutorAddress) = TutorAddress(
                 id = default.id,
                 line1 = dto.line1 ?: default.line1,
                 line2 = dto.line2 ?: default.line2,

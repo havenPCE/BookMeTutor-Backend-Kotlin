@@ -336,9 +336,10 @@ object StudentQuery {
             MapSqlParameterSource(mutableMapOf(
                     "id" to student.id,
                     "email" to student.email,
+                    "password" to student.password,
                     "firstName" to student.firstName,
                     "lastName" to student.lastName,
-                    "gender" to student.gender,
+                    "gender" to student.gender.name,
                     "registered" to student.registered,
                     "verified" to student.verified
             ))

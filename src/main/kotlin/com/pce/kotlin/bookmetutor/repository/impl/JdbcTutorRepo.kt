@@ -89,8 +89,6 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
             jdbcTemplate.update(updateTutorQuery, updateTutorParams)
             jdbcTemplate.update(deletePhoneQuery, deletePhoneParams)
             jdbcTemplate.batchUpdate(insertPhoneQuery, insertPhoneParams)
-            tutor.address?.let { tutorAddressRepo.update(it) }
-            tutor.bookings.map { bookingRepo.update(it) }
             findByEmail(tutor.email)
         } catch (e: Exception) {
             null

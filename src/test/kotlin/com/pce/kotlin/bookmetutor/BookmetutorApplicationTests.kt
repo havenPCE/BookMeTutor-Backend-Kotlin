@@ -2,10 +2,12 @@ package com.pce.kotlin.bookmetutor
 
 import com.pce.kotlin.bookmetutor.model.dao.*
 import com.pce.kotlin.bookmetutor.repository.*
+import com.pce.kotlin.bookmetutor.service.SubjectService
 import com.pce.kotlin.bookmetutor.util.Board
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.PaymentMethod
 import com.pce.kotlin.bookmetutor.util.SubjectName
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,7 +42,14 @@ class BookmetutorApplicationTests {
     @Autowired
     lateinit var tutorRepo: TutorRepo
 
+    @Autowired
+    lateinit var studentRepo: StudentRepo
+
+    @Autowired
+    lateinit var subjectService: SubjectService
+
     @Test
+    @Disabled
     fun `Test For AdminRepo`() {
         val admin = Admin(id = 1000, email = "def@gmail.com", password = "password")
         val updatedAdmin = admin.copy(password = "new-pass")
@@ -60,6 +69,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For SubjectRepo`() {
         val subject = Subject(id = 2000, subjectName = SubjectName.PHYSICS, classNumber = 8, topics = mutableSetOf("1st", "2nd", "3rd"))
         val updatedSubject = subject.copy(topics = mutableSetOf("new", "topics"))
@@ -81,6 +91,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For TutorQualificationRepo`() {
         val qualification = TutorQualification(id = 3000, degree = "B.Sc", university = "Sambalpur University", percentile = 72.50)
         val updatedQualification = qualification.copy(percentile = 66.60)
@@ -104,6 +115,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For TutorAddressRepo`() {
         val address = TutorAddress(id = 4000, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
         val updateAddress = address.copy(landmark = "C")
@@ -128,6 +140,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For InvoiceRepo`() {
         val invoice = Invoice(id = 5000, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc")
         val updatedInvoice = invoice.copy(amount = 300.00, method = PaymentMethod.UPI)
@@ -151,6 +164,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For BookingAddressRepo`() {
         val address = BookingAddress(id = 6000, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
         val updateAddress = address.copy(landmark = "C")
@@ -175,6 +189,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For Booking`() {
         val booking = Booking(
                 id = 7000,
@@ -215,6 +230,7 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For TutorRepo`() {
         val maleTutor1 = Tutor(
                 id = 8000,
@@ -288,7 +304,34 @@ class BookmetutorApplicationTests {
     }
 
     @Test
+    @Disabled
     fun `Test For StudentRepo`() {
-
+        val student = Student(
+                id = 12000,
+                email = "student@email.com",
+                password = "password",
+                firstName = "student",
+                gender = Gender.FEMALE,
+                phones = mutableSetOf("12345")
+        )
+        val updatedStudent = student.copy(
+                phones = mutableSetOf("12345", "6789")
+        )
+        val falseStudent = student.copy(
+                id = 420,
+                email = "false@gmail.com"
+        )
+        assertAll(
+                {
+                    assertEquals("SAVE METHOD SUCCESS", student, studentRepo.save(student))
+                    assertEquals("SAVE METHOD FAILURE", null, studentRepo.save(student))
+                    assertEquals("UPDATE METHOD SUCCESS", updatedStudent, studentRepo.update(updatedStudent))
+                    assertEquals("UPDATED METHOD FAILURE", null, studentRepo.update(falseStudent))
+                    assertEquals("FIND METHOD SUCCESS", updatedStudent, studentRepo.findByEmail(student.email))
+                    assertEquals("FIND METHOD FAILURE", null, studentRepo.findByEmail(falseStudent.email))
+                    assertEquals("DELETE METHOD SUCCESS", true, studentRepo.deleteByEmail(student.email))
+                    assertEquals("DELETE METHOD FAILURE", false, studentRepo.deleteByEmail(student.email))
+                }
+        )
     }
 }
