@@ -1,5 +1,6 @@
 package com.pce.kotlin.bookmetutor.model.dao
 
+import com.pce.kotlin.bookmetutor.model.dto.admin.AdminDto
 import com.pce.kotlin.bookmetutor.model.dto.admin.CreateAdminDto
 import com.pce.kotlin.bookmetutor.model.dto.admin.UpdateAdminDto
 import kotlin.random.Random
@@ -9,6 +10,12 @@ data class Admin(
         val email: String,
         val password: String
 ) {
+
+    fun toDto() = AdminDto(
+            id = this.id,
+            email = this.email
+    )
+
     companion object {
         fun fromDto(dto: CreateAdminDto) = Admin(
                 email = dto.email,

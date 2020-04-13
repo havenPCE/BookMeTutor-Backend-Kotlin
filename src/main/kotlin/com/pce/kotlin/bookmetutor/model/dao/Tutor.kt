@@ -27,7 +27,6 @@ data class Tutor(
     fun toDto() = TutorDto(
             id = this.id,
             email = this.email,
-            password = this.password,
             gender = this.gender.name,
             lastPicked = this.lastPicked,
             firstName = this.firstName,

@@ -3,10 +3,7 @@ package com.pce.kotlin.bookmetutor.model.dao
 import com.pce.kotlin.bookmetutor.model.dto.booking.BookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.CreateBookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
-import com.pce.kotlin.bookmetutor.util.Board
-import com.pce.kotlin.bookmetutor.util.BookingStatus
-import com.pce.kotlin.bookmetutor.util.Constants
-import com.pce.kotlin.bookmetutor.util.nextString
+import com.pce.kotlin.bookmetutor.util.*
 import java.time.LocalDateTime
 import kotlin.random.Random
 
@@ -22,7 +19,7 @@ data class Booking(
         val deadline: LocalDateTime,
         val scheduledTime: LocalDateTime,
         val score: Int = 0,
-        val secret: String = Random.nextString(length = Constants.SECRET_OTP_LENGTH),
+        val secret: String = Random.nextString(length = SECRET_OTP_LENGTH),
         val startTime: LocalDateTime? = null,
         val endTime: LocalDateTime? = null,
         val status: BookingStatus = BookingStatus.PENDING,
@@ -61,7 +58,7 @@ data class Booking(
                 classNumber = dto.classNumber,
                 address = BookingAddress.fromDto(dto.address),
                 scheduledTime = dto.scheduledTime,
-                deadline = dto.scheduledTime.minusHours(Constants.DEADLINE_HOURS),
+                deadline = dto.scheduledTime.minusHours(DEADLINE_HOURS),
                 invoice = Invoice.fromDto(dto.invoice)
         )
 

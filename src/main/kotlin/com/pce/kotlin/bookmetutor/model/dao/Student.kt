@@ -23,7 +23,6 @@ data class Student(
     fun toDto() = StudentDto(
             id = this.id,
             email = this.email,
-            password = this.password,
             firstName = this.firstName,
             lastName = this.lastName,
             gender = this.gender.name,

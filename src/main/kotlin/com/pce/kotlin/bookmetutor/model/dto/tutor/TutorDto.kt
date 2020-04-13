@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 data class TutorDto(
         val id: Long?,
         val email: String,
-        val password: String,
         val firstName: String,
         val lastName: String?,
         val gender: String,

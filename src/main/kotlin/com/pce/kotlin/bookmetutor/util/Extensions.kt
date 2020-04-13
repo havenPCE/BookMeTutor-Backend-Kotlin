@@ -1,5 +1,8 @@
 package com.pce.kotlin.bookmetutor.util
 
+import com.pce.kotlin.bookmetutor.model.dto.util.Response
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import kotlin.random.Random
 
 fun Random.nextString(length: Int = 10): String {
@@ -9,3 +12,5 @@ fun Random.nextString(length: Int = 10): String {
             .map(characters::get)
             .joinToString("")
 }
+
+fun response(status: HttpStatus, description: String, payload: Any? = null) = ResponseEntity(Response(description = description, payload = payload), status)
