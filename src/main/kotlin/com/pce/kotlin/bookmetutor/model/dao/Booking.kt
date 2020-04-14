@@ -26,7 +26,9 @@ data class Booking(
         val subject: String,
         val topics: Set<String> = mutableSetOf(),
         val invoice: Invoice? = null,
-        val address: BookingAddress? = null
+        val address: BookingAddress? = null,
+        val studentPhone: String? = null,
+        val tutorPhone: String? = null
 ) {
     fun toDto() = BookingDto(
             id = this.id,
@@ -47,7 +49,9 @@ data class Booking(
             secret = this.secret,
             rejects = this.rejects.toList(),
             rescheduled = this.rescheduled,
-            reschedulingReason = this.reschedulingReason
+            reschedulingReason = this.reschedulingReason,
+            studentPhone = this.studentPhone,
+            tutorPhone = this.tutorPhone
     )
 
     companion object {

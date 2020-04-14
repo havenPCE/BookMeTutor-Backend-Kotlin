@@ -5,20 +5,22 @@ import com.pce.kotlin.bookmetutor.model.dto.admin.CreateAdminDto
 import com.pce.kotlin.bookmetutor.model.dto.admin.UpdateAdminDto
 import com.pce.kotlin.bookmetutor.repository.AdminRepo
 import com.pce.kotlin.bookmetutor.service.AdminService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class JdbcAdminService(val adminRepo: AdminRepo) : AdminService {
+class JdbcAdminService(val adminRepo: AdminRepo, val passwordEncoder: BCryptPasswordEncoder) : AdminService {
     override fun createAdmin(dto: CreateAdminDto): Admin? {
-        return adminRepo.save(Admin.fromDto(dto))
+        return adminRepo.save(Admin.fromDto(dto.copy(password = passwordEncoder.encode(dto.password))))
     }
 
     override fun updateAdmin(email: String, dto: UpdateAdminDto): Admin? {
         val admin: Admin? = adminRepo.findByEmail(email)
         admin?.let {
-            return adminRepo.update(Admin.fromDto(dto, admin))
+            val password = dto.password?.let { passwordEncoder.encode(it) }
+            return adminRepo.update(Admin.fromDto(dto.copy(password = password), admin))
         }
         return null
     }

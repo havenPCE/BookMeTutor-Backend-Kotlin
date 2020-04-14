@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import kotlin.random.Random
 
+
 fun Random.nextString(length: Int = 10): String {
     val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     return (1..length)

@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admins")
 class AdminController(val adminService: AdminService, val tutorService: TutorService, val studentService: StudentService) : HandlesError() {
 
     @GetMapping("")

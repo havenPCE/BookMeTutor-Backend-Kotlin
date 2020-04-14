@@ -1,6 +1,6 @@
 package com.pce.kotlin.bookmetutor.model.dto.qualification
 
-class QualificationDto(
+data class QualificationDto(
         val id: Long?,
         val degree: String,
         val university: String,

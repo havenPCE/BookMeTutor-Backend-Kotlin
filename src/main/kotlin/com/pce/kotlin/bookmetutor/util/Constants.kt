@@ -3,7 +3,7 @@ package com.pce.kotlin.bookmetutor.util
 // Basic Constants
 const val DEADLINE_HOURS = 3L
 const val SECRET_OTP_LENGTH = 6
-const val EXPIRATION_TIME = 8L
+const val EXPIRATION_TIME = 28800000L
 const val SECRET = "SecretToEncrypt"
 const val TOKEN_PREFIX = "Bearer "
 const val HEADER_FIELD = "Authorization"
@@ -16,7 +16,7 @@ const val STUDENT_NOT_FOUND = "Student not found"
 const val TUTOR_NOT_FOUND = "Tutor not found"
 const val BOOKING_NOT_FOUND = "Booking not found"
 const val ADDRESS_NOT_FOUND = "Address id invalid"
-const val USER_EXISTS = "Email id taken"
+const val ACCOUNT_EXISTS = "Email id taken"
 const val SUBJECT_NOT_FOUND = "Subject not found"
 const val INVALID_TOKEN = "Invalid token or token expired"
 const val INVALID_REQUEST = "Missing fields or invalid data received"

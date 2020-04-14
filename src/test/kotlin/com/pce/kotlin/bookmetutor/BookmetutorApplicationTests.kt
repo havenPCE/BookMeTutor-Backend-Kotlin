@@ -2,7 +2,7 @@ package com.pce.kotlin.bookmetutor
 
 import com.pce.kotlin.bookmetutor.model.dao.*
 import com.pce.kotlin.bookmetutor.repository.*
-import com.pce.kotlin.bookmetutor.service.SubjectService
+import com.pce.kotlin.bookmetutor.service.AccountService
 import com.pce.kotlin.bookmetutor.util.Board
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.PaymentMethod
@@ -46,7 +46,8 @@ class BookmetutorApplicationTests {
     lateinit var studentRepo: StudentRepo
 
     @Autowired
-    lateinit var subjectService: SubjectService
+    lateinit var accountService: AccountService
+
 
     @Test
     @Disabled
@@ -334,4 +335,77 @@ class BookmetutorApplicationTests {
                 }
         )
     }
+
+    @Test
+    @Disabled
+    fun `Test For new Booking`() {
+        val student = Student(
+                id = 13000,
+                email = "student@email.com",
+                password = "password",
+                firstName = "student",
+                gender = Gender.MALE,
+                phones = mutableSetOf("12345")
+        )
+        val tutor = Tutor(
+                id = 14000,
+                email = "m1@email.com",
+                password = "password",
+                gender = Gender.MALE,
+                lastPicked = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
+                firstName = "tutor",
+                phones = setOf("6789"),
+                registered = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
+                address = TutorAddress(id = 101, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1"),
+                qualification = TutorQualification(id = 201, degree = "m1 d1", university = "m1 u1", percentile = 50.00)
+        )
+        val booking = Booking(
+                id = 15000,
+                board = Board.CBSE,
+                classNumber = 8,
+                rejects = setOf("abc"),
+                deadline = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
+                scheduledTime = LocalDateTime.of(2020, 4, 11, 3, 30, 30),
+                subject = SubjectName.PHYSICS.name,
+                topics = setOf("topic 1", "topic 2"),
+                invoice = Invoice(id = 1, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc"),
+                address = BookingAddress(id = 2, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
+        )
+        val savedBooking = booking.copy(
+                studentPhone = "12345",
+                tutorPhone = "6789"
+        )
+        assertEquals("SAVE METHOD FOR STUDENT", student, studentRepo.save(student))
+        assertEquals("SAVE METHOD FOR TUTOR", tutor, tutorRepo.save(tutor))
+        assertEquals("SAVE METHOD FOR BOOKING", savedBooking, bookingRepo.save(student.id, tutor.id, booking))
+    }
+
+    @Test
+    @Disabled
+    fun `Check For Availability`() {
+        val admin = Admin(
+                id = 1,
+                email = "admin@gmail.com",
+                password = "password"
+        )
+        adminRepo.save(admin)
+
+        val student = Student(
+                id = 13000,
+                email = "student@gmail.com",
+                password = "password",
+                firstName = "student",
+                gender = Gender.MALE,
+                phones = mutableSetOf("12345")
+        )
+        studentRepo.save(student)
+
+        assertEquals("IS TAKEN", true, accountService.isPresent(admin.email))
+        assertEquals("IS TAKEN", true, accountService.isPresent(student.email))
+        assertEquals("NOT TAKEN", false, accountService.isPresent("new@gmail.com"))
+
+        adminRepo.deleteByEmail(admin.email)
+        studentRepo.deleteByEmail(student.email)
+    }
+
 }

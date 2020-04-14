@@ -10,7 +10,6 @@ data class Admin(
         val email: String,
         val password: String
 ) {
-
     fun toDto() = AdminDto(
             id = this.id,
             email = this.email

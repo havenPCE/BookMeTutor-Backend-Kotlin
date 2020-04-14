@@ -23,5 +23,7 @@ data class BookingDto(
         val cancellationReason: String?,
         val reschedulingReason: String?,
         val status: String,
-        val invoice: InvoiceDto?
+        val invoice: InvoiceDto?,
+        val studentPhone: String?,
+        val tutorPhone: String?
 )

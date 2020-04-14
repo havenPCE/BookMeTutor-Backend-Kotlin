@@ -202,7 +202,7 @@ object InvoiceQuery {
 
 object BookingQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject FROM public.booking WHERE booking_id = :id;""",
+            """SELECT booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, student_phone, tutor_phone FROM public.booking WHERE booking_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
@@ -227,8 +227,9 @@ object BookingQuery {
     )
 
     fun insertIntoBooking(studentId: Long, tutorId: Long, booking: Booking) = Pair(
-            """INSERT INTO public.booking(booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, tutor_id, student_id) 
-                VALUES (:id,:board,:cancellationReason,:classNumber,:rescheduled,:reschedulingReason,:comment,:deadline,:scheduledTime,:score,:secret,:startTime,:endTime,:status,:subject,:tutorId,:studentId);""".trimIndent(),
+            """INSERT INTO public.booking(booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, tutor_id, student_id, student_phone, tutor_phone) 
+                VALUES (:id,:board,:cancellationReason,:classNumber,:rescheduled,:reschedulingReason,:comment,:deadline,:scheduledTime,:score,:secret,:startTime,:endTime,:status,:subject,:tutorId,:studentId,(SELECT phone FROM public.student_phone WHERE student_id=:studentId LIMIT 1),
+                (SELECT phone FROM public.tutor_phone WHERE tutor_id=:tutorId LIMIT 1));""".trimIndent(),
             MapSqlParameterSource(mutableMapOf(
                     "id" to booking.id,
                     "board" to booking.board.name,
@@ -269,7 +270,8 @@ object BookingQuery {
 
     fun updateBookingWithTutor(tutorId: Long, booking: Booking) = Pair(
             """UPDATE public.booking
-                SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId
+                SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId,
+                tutor_phone=(SELECT phone FROM public.tutor_phone WHERE tutor_id=:tutorId LIMIT 1)
 	            WHERE booking_id = :id;""".trimIndent(),
             MapSqlParameterSource(mutableMapOf(
                     "id" to booking.id,
@@ -415,7 +417,7 @@ object TutorQuery {
 
     fun insertPhone(tutorId: Long) = """INSERT INTO public.tutor_phone(tutor_id, phone) VALUES (${tutorId}, :phone)"""
     fun deletePhone(tutorId: Long) = Pair(
-            """DELETE FROM public.tutor_phone WHERE tutor_id = :tutorId""",
+            """DELETE FROM public.tutor_phone WHERE tutor_id = :tutorId;""",
             MapSqlParameterSource("tutorId", tutorId)
     )
 
@@ -432,5 +434,22 @@ object TutorQuery {
                     "screening" to tutor.screening.name,
                     "verified" to tutor.verified
             ))
+    )
+}
+
+object AccountQuery {
+    fun student(email: String) = Pair(
+            """SELECT COUNT(*) FROM public.student WHERE email=?;""",
+            arrayOf(email)
+    )
+
+    fun tutor(email: String) = Pair(
+            """SELECT COUNT(*) FROM public.tutor WHERE tutor_email=?;""",
+            arrayOf(email)
+    )
+
+    fun admin(email: String) = Pair(
+            """SELECT COUNT(*) FROM public.admin WHERE admin_email=?;""",
+            arrayOf(email)
     )
 }
