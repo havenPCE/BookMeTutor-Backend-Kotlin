@@ -22,6 +22,8 @@ const val INVALID_TOKEN = "Invalid token or token expired"
 const val INVALID_REQUEST = "Missing fields or invalid data received"
 const val VERIFICATION_FAILED = "Invalid token, verification failed"
 const val TASK_FAILED = "Internal Error, Task Couldn't be completed"
+const val INVALID_CREDENTIALS = "Invalid email or password"
+const val NOT_VERIFIED = "Account not verified"
 
 //Success Response String
 const val ACCOUNT_CREATED = "Account Created Successfully, Verification Pending"
@@ -29,12 +31,16 @@ const val AVAILABILITY_DESC = "payload => { true = available, false = not availa
 const val ACCOUNT_VERIFIED = "Account verified successfully, You can login now"
 const val TOKEN_GENERATED = "Authorization token to access further routes"
 const val TASK_SUCCESSFUL = "Task Completed Successfully"
+const val ACCOUNT_DISABLED = "Account has been disabled"
 
 //Payload Information
 const val ADMIN_INFO = "Admin information"
 const val TUTOR_INFO = "Tutor information"
 const val STUDENT_INFO = "Student information"
 const val SUBJECT_INFO = "Subject information"
+const val PHONE_INFO = "List of phone numbers"
+const val ADDRESS_INFO = "Address information"
+const val BOOKING_INFO = "Booking information"
 
 // Enum Classes to handle typing of data
 enum class Gender {

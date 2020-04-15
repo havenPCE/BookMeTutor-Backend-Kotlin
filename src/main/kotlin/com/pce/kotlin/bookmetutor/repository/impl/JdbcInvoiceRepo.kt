@@ -18,7 +18,8 @@ class JdbcInvoiceRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : InvoiceRep
                 id = rs.getLong("invoice_id"),
                 amount = rs.getDouble("amount"),
                 method = PaymentMethod.valueOf(rs.getString("method")),
-                summary = rs.getString("summary")
+                summary = rs.getString("summary"),
+                bookingId = rs.getLong("booking_id")
         )
     }
 

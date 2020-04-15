@@ -8,10 +8,11 @@ import kotlin.random.Random
 data class StudentAddress(
         val id: Long = Random.nextLong(Long.MAX_VALUE),
         val line1: String,
-        val line2: String?,
-        val landmark: String?,
+        val line2: String? = null,
+        val landmark: String? = null,
         val city: String,
-        val pinCode: String
+        val pinCode: String,
+        val studentId: Long? = null
 ) {
     fun toDto() = AddressDto(
             id = this.id,

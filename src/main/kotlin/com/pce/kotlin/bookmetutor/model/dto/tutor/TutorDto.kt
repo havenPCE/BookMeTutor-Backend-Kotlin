@@ -6,13 +6,13 @@ import com.pce.kotlin.bookmetutor.model.dto.qualification.QualificationDto
 import java.time.LocalDateTime
 
 data class TutorDto(
-        val id: Long?,
+        val id: Long? = null,
         val email: String,
         val firstName: String,
-        val lastName: String?,
+        val lastName: String? = null,
         val gender: String,
-        val address: AddressDto?,
-        val qualification: QualificationDto?,
+        val address: AddressDto? = null,
+        val qualification: QualificationDto? = null,
         val verified: Boolean,
         val screening: String,
         val registered: LocalDateTime,

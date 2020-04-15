@@ -8,7 +8,8 @@ data class TutorQualification(
         val id: Long = Random.nextLong(Long.MAX_VALUE),
         val degree: String,
         val university: String,
-        val percentile: Double
+        val percentile: Double,
+        val tutorId: Long? = null
 ) {
     fun toDto() = QualificationDto(
             id = this.id,

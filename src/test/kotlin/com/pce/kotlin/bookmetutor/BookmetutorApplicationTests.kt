@@ -94,7 +94,7 @@ class BookmetutorApplicationTests {
     @Test
     @Disabled
     fun `Test For TutorQualificationRepo`() {
-        val qualification = TutorQualification(id = 3000, degree = "B.Sc", university = "Sambalpur University", percentile = 72.50)
+        val qualification = TutorQualification(id = 3000, degree = "B.Sc", university = "Sambalpur University", percentile = 72.50, tutorId = 999L)
         val updatedQualification = qualification.copy(percentile = 66.60)
         val falseQualification = qualification.copy(id = 420)
         val tutorId = 999L
@@ -118,7 +118,7 @@ class BookmetutorApplicationTests {
     @Test
     @Disabled
     fun `Test For TutorAddressRepo`() {
-        val address = TutorAddress(id = 4000, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
+        val address = TutorAddress(id = 4000, line1 = "A", line2 = "B", city = "E", pinCode = "12345", tutorId = 999L)
         val updateAddress = address.copy(landmark = "C")
         val falseAddress = address.copy(id = 420)
         val tutorId = 999L
@@ -143,7 +143,7 @@ class BookmetutorApplicationTests {
     @Test
     @Disabled
     fun `Test For InvoiceRepo`() {
-        val invoice = Invoice(id = 5000, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc")
+        val invoice = Invoice(id = 5000, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc", bookingId = 999L)
         val updatedInvoice = invoice.copy(amount = 300.00, method = PaymentMethod.UPI)
         val falseInvoice = invoice.copy(id = 420)
         val bookingId = 999L
@@ -167,7 +167,7 @@ class BookmetutorApplicationTests {
     @Test
     @Disabled
     fun `Test For BookingAddressRepo`() {
-        val address = BookingAddress(id = 6000, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
+        val address = BookingAddress(id = 6000, line1 = "A", line2 = "B", city = "E", pinCode = "12345", bookingId = 999L)
         val updateAddress = address.copy(landmark = "C")
         val falseAddress = address.copy(id = 420)
         val bookingId = 999L
@@ -201,8 +201,10 @@ class BookmetutorApplicationTests {
                 scheduledTime = LocalDateTime.of(2020, 4, 11, 3, 30, 30),
                 subject = SubjectName.PHYSICS.name,
                 topics = setOf("topic 1", "topic 2"),
-                invoice = Invoice(id = 1, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc"),
-                address = BookingAddress(id = 2, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
+                invoice = Invoice(id = 1, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc", bookingId = 7000),
+                address = BookingAddress(id = 2, line1 = "A", line2 = "B", city = "E", pinCode = "12345", bookingId = 7000),
+                studentId = 999L,
+                tutorId = 999L
         )
         val updatedBooking = booking.copy(topics = setOf("new Topic"))
         val falseBooking = booking.copy(id = 420)
@@ -242,8 +244,8 @@ class BookmetutorApplicationTests {
                 firstName = "male1",
                 phones = setOf("m1"),
                 registered = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
-                address = TutorAddress(id = 101, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1"),
-                qualification = TutorQualification(id = 201, degree = "m1 d1", university = "m1 u1", percentile = 50.00)
+                address = TutorAddress(id = 101, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1", tutorId = 8000),
+                qualification = TutorQualification(id = 201, degree = "m1 d1", university = "m1 u1", percentile = 50.00, tutorId = 8000)
         )
         val femaleTutor1 = Tutor(
                 id = 9000,
@@ -254,8 +256,8 @@ class BookmetutorApplicationTests {
                 firstName = "female1",
                 phones = setOf("f1"),
                 registered = LocalDateTime.of(2020, 4, 11, 3, 40, 0),
-                address = TutorAddress(id = 102, line1 = "f1 l1", city = "ROURKELA", pinCode = "f1 p1"),
-                qualification = TutorQualification(id = 202, degree = "f1 d1", university = "f1 u1", percentile = 50.00)
+                address = TutorAddress(id = 102, line1 = "f1 l1", city = "ROURKELA", pinCode = "f1 p1", tutorId = 9000),
+                qualification = TutorQualification(id = 202, degree = "f1 d1", university = "f1 u1", percentile = 50.00, tutorId = 9000)
         )
         val maleTutor2 = Tutor(
                 id = 10000,
@@ -266,8 +268,8 @@ class BookmetutorApplicationTests {
                 firstName = "male2",
                 phones = setOf("m2"),
                 registered = LocalDateTime.of(2020, 4, 11, 3, 50, 0),
-                address = TutorAddress(id = 103, line1 = "m2 l1", city = "ROURKELA", pinCode = "m2 p1"),
-                qualification = TutorQualification(id = 203, degree = "m2 d1", university = "m2 u1", percentile = 50.00)
+                address = TutorAddress(id = 103, line1 = "m2 l1", city = "ROURKELA", pinCode = "m2 p1", tutorId = 10000),
+                qualification = TutorQualification(id = 203, degree = "m2 d1", university = "m2 u1", percentile = 50.00, tutorId = 10000)
         )
         val femaleTutor2 = Tutor(
                 id = 11000,
@@ -278,8 +280,8 @@ class BookmetutorApplicationTests {
                 firstName = "female2",
                 phones = setOf("f2"),
                 registered = LocalDateTime.of(2020, 4, 11, 4, 0, 0),
-                address = TutorAddress(id = 104, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1"),
-                qualification = TutorQualification(id = 204, degree = "m1 d1", university = "m1 u1", percentile = 50.00)
+                address = TutorAddress(id = 104, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1", tutorId = 11000),
+                qualification = TutorQualification(id = 204, degree = "m1 d1", university = "m1 u1", percentile = 50.00, tutorId = 11000)
         )
         val falseTutor = maleTutor1.copy(id = 420, email = "false")
         val updatedTutor = maleTutor1.copy(firstName = "updatedM1")
@@ -338,50 +340,6 @@ class BookmetutorApplicationTests {
 
     @Test
     @Disabled
-    fun `Test For new Booking`() {
-        val student = Student(
-                id = 13000,
-                email = "student@email.com",
-                password = "password",
-                firstName = "student",
-                gender = Gender.MALE,
-                phones = mutableSetOf("12345")
-        )
-        val tutor = Tutor(
-                id = 14000,
-                email = "m1@email.com",
-                password = "password",
-                gender = Gender.MALE,
-                lastPicked = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
-                firstName = "tutor",
-                phones = setOf("6789"),
-                registered = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
-                address = TutorAddress(id = 101, line1 = "m1 l1", city = "ROURKELA", pinCode = "m1 p1"),
-                qualification = TutorQualification(id = 201, degree = "m1 d1", university = "m1 u1", percentile = 50.00)
-        )
-        val booking = Booking(
-                id = 15000,
-                board = Board.CBSE,
-                classNumber = 8,
-                rejects = setOf("abc"),
-                deadline = LocalDateTime.of(2020, 4, 11, 3, 30, 0),
-                scheduledTime = LocalDateTime.of(2020, 4, 11, 3, 30, 30),
-                subject = SubjectName.PHYSICS.name,
-                topics = setOf("topic 1", "topic 2"),
-                invoice = Invoice(id = 1, amount = 200.00, method = PaymentMethod.CREDIT_CARD, summary = "abc"),
-                address = BookingAddress(id = 2, line1 = "A", line2 = "B", city = "E", pinCode = "12345")
-        )
-        val savedBooking = booking.copy(
-                studentPhone = "12345",
-                tutorPhone = "6789"
-        )
-        assertEquals("SAVE METHOD FOR STUDENT", student, studentRepo.save(student))
-        assertEquals("SAVE METHOD FOR TUTOR", tutor, tutorRepo.save(tutor))
-        assertEquals("SAVE METHOD FOR BOOKING", savedBooking, bookingRepo.save(student.id, tutor.id, booking))
-    }
-
-    @Test
-    @Disabled
     fun `Check For Availability`() {
         val admin = Admin(
                 id = 1,
@@ -407,5 +365,4 @@ class BookmetutorApplicationTests {
         adminRepo.deleteByEmail(admin.email)
         studentRepo.deleteByEmail(student.email)
     }
-
 }

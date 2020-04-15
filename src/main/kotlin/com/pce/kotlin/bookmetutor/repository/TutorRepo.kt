@@ -4,6 +4,7 @@ import com.pce.kotlin.bookmetutor.model.dao.Tutor
 import com.pce.kotlin.bookmetutor.util.Gender
 
 interface TutorRepo {
+    fun findById(id: Long): Tutor?
     fun findByEmail(email: String): Tutor?
     fun findTutorForAssignment(gender: Gender, city: String, rejects: List<String>): Tutor?
     fun save(tutor: Tutor): Tutor?

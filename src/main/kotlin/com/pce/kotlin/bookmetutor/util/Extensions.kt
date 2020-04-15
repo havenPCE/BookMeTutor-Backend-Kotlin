@@ -18,3 +18,5 @@ fun Random.nextString(length: Int = 10): String {
 fun response(status: HttpStatus, message: String, payload: Any? = null) =
         payload?.let { ResponseEntity(PayloadResponse(message = message, payload = it), status) }
                 ?: ResponseEntity(EmptyResponse(message = message), status)
+
+fun String.h4(): String = "<h4>${this}</h4>"

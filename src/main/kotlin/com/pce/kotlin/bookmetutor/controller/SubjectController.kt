@@ -17,21 +17,21 @@ class SubjectController(val subjectService: SubjectService) : HandlesError() {
     @PostMapping("")
     fun createSubject(@RequestBody dto: CreateSubjectDto): ResponseEntity<out Response> {
         subjectService.createSubject(dto)?.let {
-            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it)
         }
         return response(status = HttpStatus.INTERNAL_SERVER_ERROR, message = TASK_FAILED)
     }
 
     @GetMapping("")
     fun retrieveAllSubject(): ResponseEntity<out Response> {
-        val subjects: List<SubjectDto> = subjectService.retrieveAllSubjects().map { it.toDto() }
+        val subjects: List<SubjectDto> = subjectService.retrieveAllSubjects().map { it }
         return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = subjects)
     }
 
     @GetMapping(value = [""], params = ["classNumber", "subjectName"])
     fun retrieveSubject(@RequestParam classNumber: Int, @RequestParam subjectName: String): ResponseEntity<out Response> {
         subjectService.retrieveSubject(classNumber, subjectName)?.let {
-            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it)
         }
         return response(status = HttpStatus.NOT_FOUND, message = SUBJECT_NOT_FOUND)
     }
@@ -39,7 +39,7 @@ class SubjectController(val subjectService: SubjectService) : HandlesError() {
     @PutMapping("/{id}")
     fun updateSubject(@PathVariable id: Long, @RequestBody dto: UpdateSubjectDto): ResponseEntity<out Response> {
         subjectService.updateSubject(id, dto)?.let {
-            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it.toDto())
+            return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it)
         }
         return response(status = HttpStatus.NOT_FOUND, message = SUBJECT_NOT_FOUND)
     }

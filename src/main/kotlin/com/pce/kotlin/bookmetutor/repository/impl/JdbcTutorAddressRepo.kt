@@ -19,7 +19,8 @@ class JdbcTutorAddressRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : Tutor
                 line2 = rs.getString("line_2"),
                 landmark = rs.getString("landmark"),
                 city = rs.getString("city"),
-                pinCode = rs.getString("pin_code")
+                pinCode = rs.getString("pin_code"),
+                tutorId = rs.getLong("tutor_id")
         )
     }
 

@@ -6,13 +6,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 
 object AdminQuery {
     fun insert(admin: Admin) = Pair(
-            "INSERT INTO public.admin(admin_id, admin_email, admin_password) VALUES (:id, :email, :password);",
-            MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password))
+            "INSERT INTO public.admin(admin_id, admin_email, admin_password, admin_verified) VALUES (:id, :email, :password, :verified);",
+            MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password, "verified" to admin.verified))
     )
 
     fun update(admin: Admin) = Pair(
-            "UPDATE public.admin SET admin_email=:email, admin_password=:password WHERE admin_id = :id;",
-            MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password))
+            "UPDATE public.admin SET admin_email=:email, admin_password=:password, admin_verified=:verified WHERE admin_id = :id;",
+            MapSqlParameterSource(mutableMapOf("id" to admin.id, "email" to admin.email, "password" to admin.password, "verified" to admin.verified))
     )
 
     fun deleteByEmail(email: String) = Pair(
@@ -21,8 +21,13 @@ object AdminQuery {
     )
 
     fun selectByEmail(email: String) = Pair(
-            "SELECT admin_id, admin_email, admin_password FROM public.admin WHERE admin_email = :email;",
+            "SELECT admin_id, admin_email, admin_password, admin_verified FROM public.admin WHERE admin_email = :email;",
             MapSqlParameterSource("email", email)
+    )
+
+    fun selectById(id: Long) = Pair(
+            "SELECT admin_id, admin_email, admin_password, admin_verified FROM public.admin WHERE admin_id = :id;",
+            MapSqlParameterSource("id", id)
     )
 }
 
@@ -67,7 +72,7 @@ object SubjectQuery {
 
 object StudentAddressQuery {
     fun selectById(id: Long) = Pair(
-            "SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.student_address WHERE address_id = :id;",
+            "SELECT address_id, line_1, line_2, landmark, city, pin_code, student_id FROM public.student_address WHERE address_id = :id;",
             MapSqlParameterSource("id", id)
     )
 
@@ -94,12 +99,12 @@ object StudentAddressQuery {
 
 object BookingAddressQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.booking_address WHERE address_id = :id;""",
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code, booking_id FROM public.booking_address WHERE address_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
     fun selectByBookingId(bookingId: Long) = Pair(
-            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.booking_address WHERE booking_id = :bookingId;""",
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code, booking_id FROM public.booking_address WHERE booking_id = :bookingId;""",
             MapSqlParameterSource("bookingId", bookingId)
     )
 
@@ -121,7 +126,7 @@ object BookingAddressQuery {
 
 object TutorAddressQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.tutor_address WHERE address_id = :id;""",
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code, tutor_id FROM public.tutor_address WHERE address_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
@@ -141,14 +146,14 @@ object TutorAddressQuery {
     )
 
     fun selectByTutorId(tutorId: Long) = Pair(
-            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.tutor_address WHERE tutor_id = :tutorId;""",
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code, tutor_id FROM public.tutor_address WHERE tutor_id = :tutorId;""",
             MapSqlParameterSource("tutorId", tutorId)
     )
 }
 
 object TutorQualificationQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT qualification_id, degree, university, percentile FROM public.tutor_qualification WHERE qualification_id = :id;""",
+            """SELECT qualification_id, degree, university, percentile, tutor_id FROM public.tutor_qualification WHERE qualification_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
@@ -168,14 +173,14 @@ object TutorQualificationQuery {
     )
 
     fun selectByTutorId(tutorId: Long) = Pair(
-            """SELECT qualification_id, degree, university, percentile FROM public.tutor_qualification WHERE tutor_id = :tutorId;""",
+            """SELECT qualification_id, degree, university, percentile, tutor_id FROM public.tutor_qualification WHERE tutor_id = :tutorId;""",
             MapSqlParameterSource("tutorId", tutorId)
     )
 }
 
 object InvoiceQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT invoice_id, amount, method, summary FROM public.booking_invoice WHERE invoice_id = :id;""",
+            """SELECT invoice_id, amount, method, summary, booking_id FROM public.booking_invoice WHERE invoice_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
@@ -195,14 +200,14 @@ object InvoiceQuery {
     )
 
     fun selectByBookingId(bookingId: Long) = Pair(
-            """SELECT invoice_id, amount, method, summary FROM public.booking_invoice WHERE booking_id = :bookingId;""",
+            """SELECT invoice_id, amount, method, summary, booking_id FROM public.booking_invoice WHERE booking_id = :bookingId;""",
             MapSqlParameterSource("bookingId", bookingId)
     )
 }
 
 object BookingQuery {
     fun selectById(id: Long) = Pair(
-            """SELECT booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, student_phone, tutor_phone FROM public.booking WHERE booking_id = :id;""",
+            """SELECT booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, student_id, tutor_id FROM public.booking WHERE booking_id = :id;""",
             MapSqlParameterSource("id", id)
     )
 
@@ -227,9 +232,8 @@ object BookingQuery {
     )
 
     fun insertIntoBooking(studentId: Long, tutorId: Long, booking: Booking) = Pair(
-            """INSERT INTO public.booking(booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, tutor_id, student_id, student_phone, tutor_phone) 
-                VALUES (:id,:board,:cancellationReason,:classNumber,:rescheduled,:reschedulingReason,:comment,:deadline,:scheduledTime,:score,:secret,:startTime,:endTime,:status,:subject,:tutorId,:studentId,(SELECT phone FROM public.student_phone WHERE student_id=:studentId LIMIT 1),
-                (SELECT phone FROM public.tutor_phone WHERE tutor_id=:tutorId LIMIT 1));""".trimIndent(),
+            """INSERT INTO public.booking(booking_id, board, cancellation_reason, class_number, rescheduled, rescheduling_reason, comment, deadline, scheduled_time, score, secret, start_time, end_time, status, subject, tutor_id, student_id) 
+                VALUES (:id,:board,:cancellationReason,:classNumber,:rescheduled,:reschedulingReason,:comment,:deadline,:scheduledTime,:score,:secret,:startTime,:endTime,:status,:subject,:tutorId,:studentId);""".trimIndent(),
             MapSqlParameterSource(mutableMapOf(
                     "id" to booking.id,
                     "board" to booking.board.name,
@@ -270,8 +274,7 @@ object BookingQuery {
 
     fun updateBookingWithTutor(tutorId: Long, booking: Booking) = Pair(
             """UPDATE public.booking
-                SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId,
-                tutor_phone=(SELECT phone FROM public.tutor_phone WHERE tutor_id=:tutorId LIMIT 1)
+                SET board=:board, cancellation_reason=:cancellationReason, class_number=:classNumber, rescheduled=:rescheduled, rescheduling_reason=:reschedulingReason, comment=:comment, deadline=:deadline, scheduled_time=:scheduledTime, score=:score, secret=:secret, start_time=:startTime, end_time=:endTime, status=:status, subject=:subject, tutor_id=:tutorId
 	            WHERE booking_id = :id;""".trimIndent(),
             MapSqlParameterSource(mutableMapOf(
                     "id" to booking.id,
@@ -323,6 +326,12 @@ object StudentQuery {
             MapSqlParameterSource("email", email)
     )
 
+    fun selectByIdFromStudent(id: Long) = Pair(
+            """SELECT student_id, email, password, first_name, last_name, gender, registered, verified FROM public.student WHERE student_id = :id""",
+            MapSqlParameterSource("id", id)
+    )
+
+
     fun selectPhone(studentId: Long) = Pair(
             """SELECT phone FROM public.student_phone WHERE student_id = :studentId""",
             MapSqlParameterSource("studentId", studentId)
@@ -372,6 +381,11 @@ object TutorQuery {
     fun selectByEmail(email: String) = Pair(
             """SELECT tutor_id, tutor_email, tutor_password, gender, last_picked, first_name, last_name, registered, screening, verified FROM public.tutor WHERE tutor_email = :email;""",
             MapSqlParameterSource("email", email)
+    )
+
+    fun selectById(id: Long) = Pair(
+            """SELECT tutor_id, tutor_email, tutor_password, gender, last_picked, first_name, last_name, registered, screening, verified FROM public.tutor WHERE tutor_id = :id;""",
+            MapSqlParameterSource("id", id)
     )
 
     fun selectPhone(tutorId: Long) = Pair(

@@ -19,7 +19,8 @@ class JdbcBookingAddressRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : Boo
                 line2 = rs.getString("line_2"),
                 landmark = rs.getString("landmark"),
                 city = rs.getString("city"),
-                pinCode = rs.getString("pin_code")
+                pinCode = rs.getString("pin_code"),
+                bookingId = rs.getLong("booking_id")
         )
     }
 

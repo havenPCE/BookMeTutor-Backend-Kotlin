@@ -27,9 +27,10 @@ data class Booking(
         val topics: Set<String> = mutableSetOf(),
         val invoice: Invoice? = null,
         val address: BookingAddress? = null,
-        val studentPhone: String? = null,
-        val tutorPhone: String? = null
+        val studentId: Long? = null,
+        val tutorId: Long? = null
 ) {
+
     fun toDto() = BookingDto(
             id = this.id,
             board = this.board.name,
@@ -49,9 +50,7 @@ data class Booking(
             secret = this.secret,
             rejects = this.rejects.toList(),
             rescheduled = this.rescheduled,
-            reschedulingReason = this.reschedulingReason,
-            studentPhone = this.studentPhone,
-            tutorPhone = this.tutorPhone
+            reschedulingReason = this.reschedulingReason
     )
 
     companion object {
@@ -69,6 +68,7 @@ data class Booking(
         fun fromDto(dto: UpdateBookingDto, default: Booking) = default.copy(
                 topics = dto.topics?.toSet() ?: default.topics,
                 scheduledTime = dto.scheduleTime ?: default.scheduledTime,
+                deadline = dto.scheduleTime?.minusHours(DEADLINE_HOURS) ?: default.deadline,
                 startTime = dto.startTime ?: default.startTime,
                 endTime = dto.endTime ?: default.endTime,
                 rescheduled = dto.rescheduled ?: default.rescheduled,

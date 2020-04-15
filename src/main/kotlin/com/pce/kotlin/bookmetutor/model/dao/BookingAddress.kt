@@ -11,7 +11,8 @@ data class BookingAddress(
         val line2: String? = null,
         val landmark: String? = null,
         val city: String,
-        val pinCode: String
+        val pinCode: String,
+        val bookingId: Long? = null
 ) {
     fun toDto() = AddressDto(
             id = this.id,

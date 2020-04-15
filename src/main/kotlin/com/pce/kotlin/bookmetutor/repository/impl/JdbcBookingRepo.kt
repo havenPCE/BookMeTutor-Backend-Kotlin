@@ -38,8 +38,8 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
                 status = BookingStatus.valueOf(rs.getString("status")),
                 subject = rs.getString("subject"),
                 topics = emptySet(),
-                studentPhone = rs.getString("student_phone"),
-                tutorPhone = rs.getString("tutor_phone")
+                studentId = rs.getLong("student_id"),
+                tutorId = rs.getLong("tutor_id")
         )
     }
     val bookingRejectRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("reject") }

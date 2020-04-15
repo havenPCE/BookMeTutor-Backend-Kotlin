@@ -17,7 +17,8 @@ class JdbcTutorQualificationRepo(val jdbcTemplate: NamedParameterJdbcTemplate) :
                 id = rs.getLong("qualification_id"),
                 degree = rs.getString("degree"),
                 university = rs.getString("university"),
-                percentile = rs.getDouble("percentile")
+                percentile = rs.getDouble("percentile"),
+                tutorId = rs.getLong("tutor_id")
         )
     }
 

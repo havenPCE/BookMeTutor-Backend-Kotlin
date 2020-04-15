@@ -16,7 +16,8 @@ class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : AdminRepo {
         Admin(
                 id = rs.getLong("admin_id"),
                 email = rs.getString("admin_email"),
-                password = rs.getString("admin_password")
+                password = rs.getString("admin_password"),
+                verified = rs.getBoolean("admin_verified")
         )
     }
 
@@ -46,6 +47,11 @@ class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : AdminRepo {
         return jdbcTemplate.query(selectQuery, selectParams, adminRowMapper).firstOrNull()
     }
 
+    override fun findById(id: Long): Admin? {
+        val (selectQuery, selectParams) = AdminQuery.selectById(id)
+        return jdbcTemplate.query(selectQuery, selectParams, adminRowMapper).firstOrNull()
+    }
+
     override fun deleteByEmail(email: String): Boolean {
         val (deleteQuery, deleteParams) = AdminQuery.deleteByEmail(email)
         return try {
@@ -56,7 +62,7 @@ class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : AdminRepo {
     }
 
     override fun findAll(): List<Admin> {
-        val selectQuery = "SELECT admin_id, admin_email, admin_password FROM public.admin;"
+        val selectQuery = "SELECT admin_id, admin_email, admin_password, admin_verified FROM public.admin;"
         return jdbcTemplate.query(selectQuery, adminRowMapper)
     }
 }

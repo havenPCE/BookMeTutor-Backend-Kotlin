@@ -12,7 +12,7 @@ class AdminDetails(val admin: Admin) : UserDetails {
     }
 
     override fun isEnabled(): Boolean {
-        return true
+        return admin.verified
     }
 
     override fun getUsername(): String {

@@ -8,11 +8,13 @@ import kotlin.random.Random
 data class Admin(
         val id: Long = Random.nextLong(Long.MAX_VALUE),
         val email: String,
-        val password: String
+        val password: String,
+        val verified: Boolean = true
 ) {
     fun toDto() = AdminDto(
             id = this.id,
-            email = this.email
+            email = this.email,
+            verified = this.verified
     )
 
     companion object {
@@ -24,7 +26,8 @@ data class Admin(
         fun fromDto(dto: UpdateAdminDto, default: Admin) = Admin(
                 id = default.id,
                 email = default.email,
-                password = dto.password ?: default.password
+                password = dto.password ?: default.password,
+                verified = dto.verified ?: default.verified
         )
     }
 }

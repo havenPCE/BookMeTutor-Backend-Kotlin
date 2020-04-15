@@ -1,8 +1,8 @@
 package com.pce.kotlin.bookmetutor.model.dto.invoice
 
 data class InvoiceDto(
-        val id: Long?,
+        val id: Long? = null,
         val method: String,
         val amount: Double,
-        val summary: String?
+        val summary: String? = null
 )

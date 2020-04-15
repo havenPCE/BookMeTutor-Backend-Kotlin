@@ -9,7 +9,8 @@ data class Invoice(
         val id: Long = Random.nextLong(Long.MAX_VALUE),
         val amount: Double,
         val method: PaymentMethod,
-        val summary: String? = null
+        val summary: String? = null,
+        val bookingId: Long? = null
 ) {
     fun toDto() = InvoiceDto(
             id = this.id,

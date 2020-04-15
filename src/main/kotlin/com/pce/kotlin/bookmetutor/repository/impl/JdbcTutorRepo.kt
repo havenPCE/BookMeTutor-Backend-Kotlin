@@ -8,6 +8,7 @@ import com.pce.kotlin.bookmetutor.repository.TutorRepo
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.Screening
 import com.pce.kotlin.bookmetutor.util.TutorQuery
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils
@@ -39,9 +40,9 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         )
     }
 
-    override fun findByEmail(email: String): Tutor? {
-        val (selectByEmailQuery, selectByEmailParams) = TutorQuery.selectByEmail(email)
-        var tutor: Tutor? = jdbcTemplate.query(selectByEmailQuery, selectByEmailParams, tutorRowMapper).firstOrNull()
+    override fun findById(id: Long): Tutor? {
+        val (selectByEmailQuery, selectByEmailParams) = TutorQuery.selectById(id)
+        var tutor: Tutor? = selectTutor(selectByEmailQuery, selectByEmailParams)
         tutor = tutor?.let {
             val (selectPhoneQuery, selectPhoneParams) = TutorQuery.selectPhone(it.id)
             it.copy(
@@ -52,6 +53,25 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
             )
         }
         return tutor
+    }
+
+    override fun findByEmail(email: String): Tutor? {
+        val (selectByEmailQuery, selectByEmailParams) = TutorQuery.selectByEmail(email)
+        var tutor: Tutor? = selectTutor(selectByEmailQuery, selectByEmailParams)
+        tutor = tutor?.let {
+            val (selectPhoneQuery, selectPhoneParams) = TutorQuery.selectPhone(it.id)
+            it.copy(
+                    phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
+                    address = tutorAddressRepo.findByTutorId(it.id),
+                    qualification = tutorQualificationRepo.findByTutorId(it.id),
+                    bookings = bookingRepo.findByTutorId(it.id).toSet()
+            )
+        }
+        return tutor
+    }
+
+    fun selectTutor(query: String, params: MapSqlParameterSource): Tutor? {
+        return jdbcTemplate.query(query, params, tutorRowMapper).firstOrNull()
     }
 
     override fun findTutorForAssignment(gender: Gender, city: String, rejects: List<String>): Tutor? {

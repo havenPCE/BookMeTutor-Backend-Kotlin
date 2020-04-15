@@ -6,6 +6,7 @@ import com.pce.kotlin.bookmetutor.repository.StudentAddressRepo
 import com.pce.kotlin.bookmetutor.repository.StudentRepo
 import com.pce.kotlin.bookmetutor.util.Gender
 import com.pce.kotlin.bookmetutor.util.StudentQuery
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils
@@ -35,9 +36,27 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         )
     }
 
+    override fun findById(id: Long): Student? {
+        val (selectStudentQuery, selectStudentParams) = StudentQuery.selectByIdFromStudent(id)
+        var student: Student? = selectStudent(selectStudentQuery, selectStudentParams)
+        student = student?.let {
+            val (selectPhoneQuery, selectPhoneParams) = StudentQuery.selectPhone(it.id)
+            it.copy(
+                    phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
+                    addresses = studentAddressRepo.findByStudentId(it.id).toSet(),
+                    bookings = bookingRepo.findByStudentId(it.id).toSet()
+            )
+        }
+        return student
+    }
+
+    fun selectStudent(query: String, params: MapSqlParameterSource): Student? {
+        return jdbcTemplate.query(query, params, studentRowMapper).firstOrNull()
+    }
+
     override fun findByEmail(email: String): Student? {
         val (selectStudentQuery, selectStudentParams) = StudentQuery.selectByEmailFromStudent(email)
-        var student: Student? = jdbcTemplate.query(selectStudentQuery, selectStudentParams, studentRowMapper).firstOrNull()
+        var student: Student? = selectStudent(selectStudentQuery, selectStudentParams)
         student = student?.let {
             val (selectPhoneQuery, selectPhoneParams) = StudentQuery.selectPhone(it.id)
             it.copy(
