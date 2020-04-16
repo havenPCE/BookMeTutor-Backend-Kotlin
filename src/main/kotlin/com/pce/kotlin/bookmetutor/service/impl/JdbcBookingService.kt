@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo, val studentRepo: StudentRepo, val emailService: EmailService) : BookingService {
     override fun createBooking(email: String, dto: CreateBookingDto): BookingDto? {
         return studentRepo.findByEmail(email)?.let { student ->
-            tutorRepo.findTutorForAssignment(student.gender, dto.address.city, emptyList())?.let { tutor ->
+            tutorRepo.findTutorForAssignment(dto.address.city, emptyList())?.let { tutor ->
                 bookingRepo.save(student.id, tutor.id, Booking.fromDto(dto))?.let { booking ->
                     sendCreation(student.email, tutor.email, student.firstName, tutor.firstName, booking.id)
                     booking.toDto().copy(
@@ -67,7 +67,7 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
             booking.address?.let { address ->
                 booking.studentId?.let { studentRepo.findById(it) }
                         ?.let { student ->
-                            tutorRepo.findTutorForAssignment(student.gender, address.city, booking.rejects.toList())?.let { tutor ->
+                            tutorRepo.findTutorForAssignment(address.city, booking.rejects.toList())?.let { tutor ->
                                 bookingRepo.update(booking, tutor.id)?.let {
                                     sendAvailable(tutor.email, tutor.firstName, booking.id)
                                     it.toDto().copy(

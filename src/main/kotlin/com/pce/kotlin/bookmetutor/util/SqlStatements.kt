@@ -403,15 +403,14 @@ object TutorQuery {
             MapSqlParameterSource("tutorId", tutorId)
     )
 
-    fun selectByRequirement(gender: Gender, city: String, rejects: List<String>) = Pair(
+    fun selectByRequirement(city: String, rejects: List<String>) = Pair(
             if (rejects.isNotEmpty()) {
-                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city AND t.tutor_email NOT IN (:rejects) ORDER BY t.last_picked ASC LIMIT 1;"""
+                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE ta.city = :city AND t.tutor_email NOT IN (:rejects) ORDER BY t.last_picked ASC LIMIT 1;"""
             } else {
-                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city ORDER BY t.last_picked ASC LIMIT 1;"""
+                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE ta.city = :city ORDER BY t.last_picked ASC LIMIT 1;"""
             }
             ,
             MapSqlParameterSource(mutableMapOf(
-                    "gender" to gender.name,
                     "city" to city,
                     "rejects" to rejects
             ))

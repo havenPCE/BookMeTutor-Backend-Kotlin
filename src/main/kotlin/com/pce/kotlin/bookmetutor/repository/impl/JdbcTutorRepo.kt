@@ -83,8 +83,8 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         return jdbcTemplate.query(query, params, tutorRowMapper).firstOrNull()
     }
 
-    override fun findTutorForAssignment(gender: Gender, city: String, rejects: List<String>): Tutor? {
-        val (selectTutorQuery, selectTutorParams) = TutorQuery.selectByRequirement(gender, city, rejects)
+    override fun findTutorForAssignment(city: String, rejects: List<String>): Tutor? {
+        val (selectTutorQuery, selectTutorParams) = TutorQuery.selectByRequirement(city, rejects)
         return jdbcTemplate.query(selectTutorQuery, selectTutorParams, tutorIdRowMapper)
                 .firstOrNull()?.let { findById(it) }
     }
