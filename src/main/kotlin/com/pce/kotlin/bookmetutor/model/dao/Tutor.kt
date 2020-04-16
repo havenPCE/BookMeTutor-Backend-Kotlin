@@ -18,7 +18,7 @@ data class Tutor(
         val lastName: String? = null,
         val phones: Set<String> = mutableSetOf(),
         val registered: LocalDateTime = LocalDateTime.now(),
-        val screening: Screening = Screening.PENDING,
+        val screening: Screening = Screening.ACCEPTED,
         val verified: Boolean = false,
         val address: TutorAddress? = null,
         val qualification: TutorQualification? = null,

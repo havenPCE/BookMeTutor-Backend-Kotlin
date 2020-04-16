@@ -23,7 +23,7 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
         return response(status = HttpStatus.OK, message = ADMIN_INFO, payload = admins)
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/{email}/")
     fun retrieveAdmin(@PathVariable email: String): ResponseEntity<out Response> {
         adminService.retrieveAdmin(email)?.let {
             return response(status = HttpStatus.OK, message = ADMIN_INFO, payload = it)
@@ -37,7 +37,7 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
         return response(status = HttpStatus.OK, message = TUTOR_INFO, payload = tutors)
     }
 
-    @GetMapping("/tutors/{email}")
+    @GetMapping("/tutors/{email}/")
     fun retrieveTutor(@PathVariable email: String): ResponseEntity<out Response> {
         tutorService.retrieveTutor(email)?.let {
             return response(status = HttpStatus.OK, message = TUTOR_INFO, payload = it)
@@ -51,7 +51,7 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
         return response(status = HttpStatus.OK, message = STUDENT_INFO, payload = students)
     }
 
-    @GetMapping("/students/{email}")
+    @GetMapping("/students/{email}/")
     fun retrieveStudent(@PathVariable email: String): ResponseEntity<out Response> {
         studentService.retrieveStudent(email)?.let {
             return response(status = HttpStatus.OK, message = STUDENT_INFO, payload = it)
@@ -59,7 +59,7 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
         return response(status = HttpStatus.NOT_FOUND, message = STUDENT_NOT_FOUND)
     }
 
-    @PutMapping("/{email}")
+    @PutMapping("/{email}/")
     fun updateAdmin(@PathVariable email: String, @RequestBody dto: UpdateAdminDto): ResponseEntity<out Response> {
         adminService.updateAdmin(email, dto)?.let {
             return response(status = HttpStatus.OK, message = ADMIN_INFO, payload = it)
@@ -67,21 +67,21 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
         return response(status = HttpStatus.NOT_FOUND, message = ADMIN_NOT_FOUND)
     }
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/{email}/")
     fun removeAdmin(@PathVariable email: String): ResponseEntity<out Response> {
         return if (adminService.removeAdmin(email)) {
             response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
         } else response(status = HttpStatus.NOT_FOUND, message = ADMIN_NOT_FOUND)
     }
 
-    @DeleteMapping("/{adminEmail}/students/{studentEmail}")
+    @DeleteMapping("/{adminEmail}/students/{studentEmail}/")
     fun removeStudent(@PathVariable adminEmail: String, @PathVariable studentEmail: String): ResponseEntity<out Response> {
         return if (studentService.removeStudent(studentEmail)) {
             response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
         } else response(status = HttpStatus.NOT_FOUND, message = STUDENT_NOT_FOUND)
     }
 
-    @DeleteMapping("/{adminEmail}/tutors/{tutorEmail}")
+    @DeleteMapping("/{adminEmail}/tutors/{tutorEmail}/")
     fun removeTutor(@PathVariable adminEmail: String, @PathVariable tutorEmail: String): ResponseEntity<out Response> {
         return if (tutorService.removeTutor(tutorEmail)) {
             response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)

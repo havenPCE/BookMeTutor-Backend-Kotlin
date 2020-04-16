@@ -22,16 +22,13 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/account")
 class AccountController(val studentService: StudentService, val tutorService: TutorService,
                         val adminService: AdminService, val accountService: AccountService,
-                        val emailService: EmailService, val jwtTokenService: JwtTokenService, val authenticationManager: AuthenticationManager) : HandlesError() {
-
-    companion object {
-        val resetRequest: Map<String, String> = mutableMapOf()
-    }
+                        val emailService: EmailService, val jwtTokenService: JwtTokenService,
+                        val authenticationManager: AuthenticationManager) : HandlesError() {
 
     @PostMapping("/register-admin")
     fun registerAdmin(@RequestBody dto: CreateAdminDto): ResponseEntity<out Response> {
         adminService.createAdmin(dto)?.let {
-            return response(status = HttpStatus.OK, message = ADMIN_INFO, payload = it)
+            return response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
         }
         return response(status = HttpStatus.CONFLICT, message = ACCOUNT_EXISTS)
     }
@@ -76,9 +73,9 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
                     }
                     else -> ResponseEntity(INVALID_REQUEST.h4(), HttpStatus.BAD_REQUEST)
                 }
-            } else ResponseEntity(INVALID_TOKEN.h4(), HttpStatus.UNAUTHORIZED)
+            } else ResponseEntity(VERIFICATION_FAILED.h4(), HttpStatus.UNAUTHORIZED)
         }
-        return ResponseEntity(INVALID_TOKEN.h4(), HttpStatus.UNAUTHORIZED)
+        return ResponseEntity(VERIFICATION_FAILED.h4(), HttpStatus.UNAUTHORIZED)
     }
 
     @PostMapping("/authenticate")
@@ -94,7 +91,7 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
         }
     }
 
-    @PostMapping("/forgot")
+    @PutMapping("/forgot")
     fun forgotRequest(@RequestBody dto: ResetRequest): ResponseEntity<out Response> {
         return when (dto.role) {
             Authority.STUDENT.name -> {
@@ -113,17 +110,19 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
 
     @GetMapping("/reset")
     fun resetPassword(@RequestParam email: String, @RequestParam jwt: String, @RequestParam role: String): ResponseEntity<String> {
-        val userName = jwtTokenService.retrieveUserNameFromToken(jwt)
+        val text = jwtTokenService.retrieveUserNameFromToken(jwt)?.split(",")
+        val userName = text?.get(0)
+        val password = text?.get(1)
         userName?.let {
             return if (userName == email) {
                 when (role) {
                     Authority.STUDENT.name -> {
-                        studentService.updateStudent(email, UpdateStudentDto(password = resetRequest[email]))?.let {
+                        studentService.updateStudent(email, UpdateStudentDto(password = password))?.let {
                             ResponseEntity(TASK_SUCCESSFUL.h4(), HttpStatus.OK)
                         } ?: ResponseEntity(STUDENT_NOT_FOUND.h4(), HttpStatus.NOT_FOUND)
                     }
                     Authority.TUTOR.name -> {
-                        tutorService.updateTutor(email, UpdateTutorDto(password = resetRequest[email]))?.let {
+                        tutorService.updateTutor(email, UpdateTutorDto(password = password))?.let {
                             ResponseEntity(TASK_SUCCESSFUL.h4(), HttpStatus.OK)
                         } ?: ResponseEntity(TUTOR_NOT_FOUND.h4(), HttpStatus.NOT_FOUND)
                     }
@@ -140,8 +139,7 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
     }
 
     fun addResetRequest(email: String, password: String, role: Authority): ResponseEntity<out Response> {
-        resetRequest.plus(Pair(email, password))
-        val token = jwtTokenService.generate(email)
+        val token = jwtTokenService.generate("$email,$password")
         val (subject, text) = makeResetRequest(email, token, role)
         emailService.sendMail(email, subject, text)
         return response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)

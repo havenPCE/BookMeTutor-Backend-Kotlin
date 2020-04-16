@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/students")
 class StudentController(val studentService: StudentService, val bookingService: BookingService) : HandlesError() {
 
-    @GetMapping("/{email}")
+    @GetMapping("/{email}/")
     fun retrieveStudent(@PathVariable email: String): ResponseEntity<out Response> {
         studentService.retrieveStudent(email)?.let {
             return response(status = HttpStatus.OK, message = STUDENT_INFO, payload = it)
@@ -90,7 +90,7 @@ class StudentController(val studentService: StudentService, val bookingService: 
         return response(status = HttpStatus.INTERNAL_SERVER_ERROR, message = TASK_FAILED)
     }
 
-    @PutMapping("/{email}")
+    @PutMapping("/{email}/")
     fun updateStudentInfo(@PathVariable email: String, @RequestBody dto: UpdateStudentDto): ResponseEntity<out Response> {
         studentService.updateStudent(email, dto)?.let {
             return response(status = HttpStatus.OK, message = STUDENT_INFO, payload = it)
@@ -122,7 +122,7 @@ class StudentController(val studentService: StudentService, val bookingService: 
         return response(status = HttpStatus.NOT_FOUND, message = BOOKING_NOT_FOUND)
     }
 
-    @PutMapping("/{email}/bookings/{id}/review")
+    @PutMapping("/{email}/bookings/{id}/feedback")
     fun reviewBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto)?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
@@ -130,7 +130,7 @@ class StudentController(val studentService: StudentService, val bookingService: 
         return response(status = HttpStatus.NOT_FOUND, message = BOOKING_NOT_FOUND)
     }
 
-    @PutMapping("/{email}/bookings/{id}/topics")
+    @PutMapping("/{email}/bookings/{id}/changeTopics")
     fun changeBookingTopics(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto)?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
@@ -160,7 +160,7 @@ class StudentController(val studentService: StudentService, val bookingService: 
         } else response(status = HttpStatus.NOT_FOUND, message = ADDRESS_NOT_FOUND)
     }
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/{email}/")
     fun disableStudent(@PathVariable email: String): ResponseEntity<out Response> {
         studentService.updateStudent(email, UpdateStudentDto(verified = false))?.let {
             return response(status = HttpStatus.OK, message = ACCOUNT_DISABLED)

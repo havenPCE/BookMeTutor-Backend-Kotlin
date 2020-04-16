@@ -2,6 +2,7 @@ package com.pce.kotlin.bookmetutor.configuration
 
 import com.pce.kotlin.bookmetutor.service.JwtTokenService
 import com.pce.kotlin.bookmetutor.util.HEADER_FIELD
+import com.pce.kotlin.bookmetutor.util.TOKEN_PREFIX
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse
 class JwtRequestFilter(@Qualifier("hybridDetailsService") val userDetailsService: UserDetailsService, val jwtTokenService: JwtTokenService) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val tokenHeader: String? = request.getHeader(HEADER_FIELD)
-        val token: String? = tokenHeader.takeIf { it != null && it.startsWith("Bearer ") }?.substring(7)
+        val token: String? = tokenHeader.takeIf { it != null && it.startsWith(TOKEN_PREFIX) }?.substring(7)
         token?.let { t ->
             val userName: String? = jwtTokenService.retrieveUserNameFromToken(t)
             userName?.let { u ->

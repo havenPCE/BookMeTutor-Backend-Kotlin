@@ -1,12 +1,12 @@
 package com.pce.kotlin.bookmetutor.util
 
 fun makeVerifyRequest(email: String = "", token: String = "", role: Authority = Authority.STUDENT): Pair<String, String> = Pair("Request for ${role.name} account verification",
-        """"
+        """
                     |<h4>Thank you for joining us
                     |
                     |Please verify your email using the button below
                     |<a href="${BASE_URL}/account/verify?email=${email}&jwt=${token}&role=${role.name}"><button type="button">Verify Account</button></a></h4>
-                    """".trimMargin().h4()
+                    """.trimMargin().h4()
 )
 
 fun makeResetRequest(email: String = "", token: String = "", role: Authority = Authority.STUDENT): Pair<String, String> = Pair("Request for ${role.name} password reset",

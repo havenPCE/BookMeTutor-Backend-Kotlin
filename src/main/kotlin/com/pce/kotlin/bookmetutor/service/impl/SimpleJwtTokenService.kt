@@ -21,7 +21,7 @@ class SimpleJwtTokenService : JwtTokenService {
     }
 
     override fun retrieveClaimsFromToken(token: String): Claims? {
-        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token)?.body
+        return Jwts.parser().setSigningKey(SECRET)?.parseClaimsJws(token)?.body
     }
 
     override fun isTokenExpired(token: String): Boolean {
