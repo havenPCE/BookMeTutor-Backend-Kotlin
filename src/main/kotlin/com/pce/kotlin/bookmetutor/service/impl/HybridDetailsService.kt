@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service
 @Service
 class HybridDetailsService(val adminRepo: AdminRepo, val studentRepo: StudentRepo, val tutorRepo: TutorRepo) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        adminRepo.findByEmail(username)?.let { return AdminDetails(it) }
-        studentRepo.findByEmail(username)?.let { return StudentDetails(it) }
-        tutorRepo.findByEmail(username)?.let { return TutorDetails(it) }
-        return User("user", "password", emptyList())
+        adminRepo.findUser(username)?.let { return AdminDetails(it) }
+        studentRepo.findUser(username)?.let { return StudentDetails(it) }
+        tutorRepo.findUser(username)?.let { return TutorDetails(it) }
+        return User("default", "default", emptyList())
     }
 }

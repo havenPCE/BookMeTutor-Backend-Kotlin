@@ -32,8 +32,8 @@ class JwtRequestFilter(@Qualifier("hybridDetailsService") val userDetailsService
                     auth.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = auth
                 }
-                filterChain.doFilter(request, response)
             }
         }
+        filterChain.doFilter(request, response)
     }
 }

@@ -1,6 +1,7 @@
 package com.pce.kotlin.bookmetutor.repository
 
 import com.pce.kotlin.bookmetutor.model.dao.Tutor
+import com.pce.kotlin.bookmetutor.model.dao.User
 import com.pce.kotlin.bookmetutor.util.Gender
 
 interface TutorRepo {
@@ -11,4 +12,5 @@ interface TutorRepo {
     fun update(tutor: Tutor): Tutor?
     fun deleteByEmail(email: String): Boolean
     fun findAll(): List<Tutor>
+    fun findUser(email: String): User?
 }

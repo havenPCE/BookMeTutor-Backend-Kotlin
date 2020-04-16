@@ -1,6 +1,7 @@
 package com.pce.kotlin.bookmetutor.repository.impl
 
 import com.pce.kotlin.bookmetutor.model.dao.Tutor
+import com.pce.kotlin.bookmetutor.model.dao.User
 import com.pce.kotlin.bookmetutor.repository.BookingRepo
 import com.pce.kotlin.bookmetutor.repository.TutorAddressRepo
 import com.pce.kotlin.bookmetutor.repository.TutorQualificationRepo
@@ -23,7 +24,7 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
                     val tutorQualificationRepo: TutorQualificationRepo,
                     val bookingRepo: BookingRepo) : TutorRepo {
 
-    val emailRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("tutor_email") }
+    val tutorIdRowMapper: (ResultSet, Int) -> Long = { rs, _ -> rs.getLong("tutor_id") }
     val phoneRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("phone") }
     val tutorRowMapper: (ResultSet, Int) -> Tutor = { rs, _ ->
         Tutor(
@@ -36,7 +37,15 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
                 lastName = rs.getString("last_name"),
                 phones = emptySet(),
                 registered = rs.getTimestamp("registered").toLocalDateTime(),
-                screening = Screening.valueOf(rs.getString("screening"))
+                screening = Screening.valueOf(rs.getString("screening")),
+                verified = rs.getBoolean("verified")
+        )
+    }
+    val userRowMapper: (ResultSet, Int) -> User = { rs, _ ->
+        User(
+                userName = rs.getString("tutor_email"),
+                password = rs.getString("tutor_password"),
+                verified = rs.getBoolean("verified")
         )
     }
 
@@ -76,9 +85,8 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
 
     override fun findTutorForAssignment(gender: Gender, city: String, rejects: List<String>): Tutor? {
         val (selectTutorQuery, selectTutorParams) = TutorQuery.selectByRequirement(gender, city, rejects)
-        return jdbcTemplate.query(selectTutorQuery, selectTutorParams, emailRowMapper).firstOrNull()?.let {
-            findByEmail(it)
-        }
+        return jdbcTemplate.query(selectTutorQuery, selectTutorParams, tutorIdRowMapper)
+                .firstOrNull()?.let { findById(it) }
     }
 
     override fun save(tutor: Tutor): Tutor? {
@@ -121,9 +129,14 @@ class JdbcTutorRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
     }
 
     override fun findAll(): List<Tutor> {
-        val selectQuery = "SELECT tutor_email FROM public.tutor;"
-        return jdbcTemplate.query(selectQuery, emailRowMapper)
-                .mapNotNull { findByEmail(it) }
+        val selectQuery = "SELECT tutor_id FROM public.tutor;"
+        return jdbcTemplate.query(selectQuery, tutorIdRowMapper)
+                .mapNotNull { findById(it) }
+    }
+
+    override fun findUser(email: String): User? {
+        val (query, params) = TutorQuery.selectUser(email)
+        return jdbcTemplate.query(query, params, userRowMapper).firstOrNull()
     }
 
     fun phoneBatchParams(phones: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(phones.map { mutableMapOf("phone" to it) }.toTypedArray())

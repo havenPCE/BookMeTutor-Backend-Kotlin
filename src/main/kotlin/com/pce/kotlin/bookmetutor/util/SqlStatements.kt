@@ -29,6 +29,11 @@ object AdminQuery {
             "SELECT admin_id, admin_email, admin_password, admin_verified FROM public.admin WHERE admin_id = :id;",
             MapSqlParameterSource("id", id)
     )
+
+    fun selectUser(email: String) = Pair(
+            """SELECT admin_email, admin_password, admin_verified FROM public.admin WHERE admin_email = :email;""",
+            MapSqlParameterSource("email", email)
+    )
 }
 
 object SubjectQuery {
@@ -337,6 +342,11 @@ object StudentQuery {
             MapSqlParameterSource("studentId", studentId)
     )
 
+    fun selectUser(email: String) = Pair(
+            """SELECT email, password, verified FROM public.student WHERE email = :email;""",
+            MapSqlParameterSource("email", email)
+    )
+
     fun deleteByEmail(email: String) = Pair(
             """DELETE FROM public.student WHERE email = :email;""",
             MapSqlParameterSource("email", email)
@@ -395,9 +405,9 @@ object TutorQuery {
 
     fun selectByRequirement(gender: Gender, city: String, rejects: List<String>) = Pair(
             if (rejects.isNotEmpty()) {
-                """SELECT t.tutor_email FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city AND t.tutor_email NOT IN (:rejects) ORDER BY t.last_picked ASC LIMIT 1;"""
+                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city AND t.tutor_email NOT IN (:rejects) ORDER BY t.last_picked ASC LIMIT 1;"""
             } else {
-                """SELECT t.tutor_email FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city ORDER BY t.last_picked ASC LIMIT 1;"""
+                """SELECT t.tutor_id FROM public.tutor t JOIN public.tutor_address ta ON t.tutor_id = ta.tutor_id WHERE t.gender = :gender AND ta.city = :city ORDER BY t.last_picked ASC LIMIT 1;"""
             }
             ,
             MapSqlParameterSource(mutableMapOf(
@@ -405,6 +415,11 @@ object TutorQuery {
                     "city" to city,
                     "rejects" to rejects
             ))
+    )
+
+    fun selectUser(email: String) = Pair(
+            """SELECT tutor_email, tutor_password, verified FROM public.tutor WHERE tutor_email = :email""",
+            MapSqlParameterSource("email", email)
     )
 
     fun deleteByEmail(email: String) = Pair(
