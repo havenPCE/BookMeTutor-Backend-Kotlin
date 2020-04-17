@@ -6,7 +6,7 @@ import com.pce.kotlin.bookmetutor.model.dto.qualification.QualificationDto
 import java.time.LocalDateTime
 
 data class TutorDto(
-        val id: Long? = null,
+        val id: Long,
         val email: String,
         val firstName: String,
         val lastName: String? = null,

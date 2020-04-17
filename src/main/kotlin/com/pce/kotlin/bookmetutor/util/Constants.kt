@@ -41,6 +41,7 @@ const val SUBJECT_INFO = "Subject information"
 const val PHONE_INFO = "List of phone numbers"
 const val ADDRESS_INFO = "Address information"
 const val BOOKING_INFO = "Booking information"
+const val QUALIFICATION_INFO = "Qualification information"
 
 // Enum Classes to handle typing of data
 enum class Gender {

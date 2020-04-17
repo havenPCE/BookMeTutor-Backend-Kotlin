@@ -1,9 +1,11 @@
 package com.pce.kotlin.bookmetutor.service.impl
 
 import com.pce.kotlin.bookmetutor.model.dao.Booking
+import com.pce.kotlin.bookmetutor.model.dao.Tutor
 import com.pce.kotlin.bookmetutor.model.dto.booking.BookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.CreateBookingDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
+import com.pce.kotlin.bookmetutor.model.dto.tutor.UpdateTutorDto
 import com.pce.kotlin.bookmetutor.repository.BookingRepo
 import com.pce.kotlin.bookmetutor.repository.StudentRepo
 import com.pce.kotlin.bookmetutor.repository.TutorRepo
@@ -15,6 +17,7 @@ import com.pce.kotlin.bookmetutor.util.makeBookingChangeMail
 import com.pce.kotlin.bookmetutor.util.makeThanksMail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 @Transactional
@@ -24,6 +27,7 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
             tutorRepo.findTutorForAssignment(dto.address.city, emptyList())?.let { tutor ->
                 bookingRepo.save(student.id, tutor.id, Booking.fromDto(dto))?.let { booking ->
                     sendCreation(student.email, tutor.email, student.firstName, tutor.firstName, booking.id)
+                    tutorRepo.update(Tutor.fromDto(UpdateTutorDto(lastPicked = LocalDateTime.now()), tutor))
                     booking.toDto().copy(
                             studentEmail = student.email,
                             studentPhone = student.phones.firstOrNull(),
@@ -70,6 +74,7 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
                             tutorRepo.findTutorForAssignment(address.city, booking.rejects.toList())?.let { tutor ->
                                 bookingRepo.update(booking, tutor.id)?.let {
                                     sendAvailable(tutor.email, tutor.firstName, booking.id)
+                                    tutorRepo.update(Tutor.fromDto(UpdateTutorDto(lastPicked = LocalDateTime.now()), tutor))
                                     it.toDto().copy(
                                             studentEmail = student.email,
                                             studentPhone = student.phones.firstOrNull(),

@@ -5,7 +5,7 @@ import com.pce.kotlin.bookmetutor.model.dto.invoice.InvoiceDto
 import java.time.LocalDateTime
 
 data class BookingDto(
-        val id: Long? = null,
+        val id: Long,
         val subject: String,
         val topics: List<String>,
         val rejects: List<String>,

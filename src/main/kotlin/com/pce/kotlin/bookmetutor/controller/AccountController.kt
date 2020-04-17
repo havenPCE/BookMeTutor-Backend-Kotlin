@@ -138,7 +138,7 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
         return response(status = HttpStatus.OK, message = AVAILABILITY_DESC, payload = !accountService.isPresent(email))
     }
 
-    fun addResetRequest(email: String, password: String, role: Authority): ResponseEntity<out Response> {
+    private fun addResetRequest(email: String, password: String, role: Authority): ResponseEntity<out Response> {
         val token = jwtTokenService.generate("$email,$password")
         val (subject, text) = makeResetRequest(email, token, role)
         emailService.sendMail(email, subject, text)
