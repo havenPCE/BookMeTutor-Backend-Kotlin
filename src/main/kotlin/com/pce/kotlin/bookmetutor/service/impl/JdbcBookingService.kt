@@ -41,7 +41,7 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
     override fun updateBooking(id: Long, dto: UpdateBookingDto): BookingDto? {
         val update = bookingRepo.findById(id)?.let { booking ->
             if (booking.rescheduled) {
-                bookingRepo.update(Booking.fromDto(dto.copy(scheduleTime = null), booking))
+                bookingRepo.update(Booking.fromDto(dto.copy(scheduledTime = null), booking))
             } else bookingRepo.update(Booking.fromDto(dto, booking))
         }?.let { toDto(it) }
         update?.tutorEmail?.let {

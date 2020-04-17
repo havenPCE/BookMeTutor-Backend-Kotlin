@@ -38,7 +38,7 @@ data class Booking(
             classNumber = this.classNumber,
             comment = this.comment,
             deadline = this.deadline,
-            scheduleTime = this.scheduledTime,
+            scheduledTime = this.scheduledTime,
             score = this.score,
             startTime = this.startTime,
             endTime = this.endTime,
@@ -67,8 +67,8 @@ data class Booking(
 
         fun fromDto(dto: UpdateBookingDto, default: Booking) = default.copy(
                 topics = dto.topics?.toSet() ?: default.topics,
-                scheduledTime = dto.scheduleTime ?: default.scheduledTime,
-                deadline = dto.scheduleTime?.minusHours(DEADLINE_HOURS) ?: default.deadline,
+                scheduledTime = dto.scheduledTime ?: default.scheduledTime,
+                deadline = dto.scheduledTime?.minusHours(DEADLINE_HOURS) ?: default.deadline,
                 startTime = dto.startTime ?: default.startTime,
                 endTime = dto.endTime ?: default.endTime,
                 rescheduled = dto.rescheduled ?: default.rescheduled,

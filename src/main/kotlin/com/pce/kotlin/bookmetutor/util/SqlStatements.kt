@@ -97,7 +97,7 @@ object StudentAddressQuery {
     )
 
     fun selectByStudentId(studentId: Long) = Pair(
-            """SELECT address_id, line_1, line_2, landmark, city, pin_code FROM public.student_address WHERE student_id = :studentId;""",
+            """SELECT address_id, line_1, line_2, landmark, city, pin_code, student_id FROM public.student_address WHERE student_id = :studentId;""",
             MapSqlParameterSource("studentId", studentId)
     )
 }

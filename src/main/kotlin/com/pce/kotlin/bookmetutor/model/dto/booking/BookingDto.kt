@@ -12,7 +12,7 @@ data class BookingDto(
         val classNumber: Int,
         val board: String,
         val address: AddressDto? = null,
-        val scheduleTime: LocalDateTime,
+        val scheduledTime: LocalDateTime,
         val deadline: LocalDateTime,
         val startTime: LocalDateTime? = null,
         val endTime: LocalDateTime? = null,
