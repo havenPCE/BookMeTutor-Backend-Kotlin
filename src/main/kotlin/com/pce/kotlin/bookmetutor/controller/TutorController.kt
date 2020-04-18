@@ -4,6 +4,7 @@ import com.pce.kotlin.bookmetutor.model.dto.address.UpdateAddressDto
 import com.pce.kotlin.bookmetutor.model.dto.booking.UpdateBookingDto
 import com.pce.kotlin.bookmetutor.model.dto.phone.CreatePhoneDto
 import com.pce.kotlin.bookmetutor.model.dto.tutor.UpdateTutorDto
+import com.pce.kotlin.bookmetutor.model.dto.util.CompletionRequest
 import com.pce.kotlin.bookmetutor.model.dto.util.Response
 import com.pce.kotlin.bookmetutor.service.BookingService
 import com.pce.kotlin.bookmetutor.service.EmailService
@@ -12,6 +13,7 @@ import com.pce.kotlin.bookmetutor.util.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/tutors")
@@ -113,6 +115,22 @@ class TutorController(val tutorService: TutorService, val bookingService: Bookin
             return response(status = HttpStatus.EXPECTATION_FAILED, message = TUTOR_NOT_FOUND)
         }
         return response(status = HttpStatus.NOT_FOUND, message = BOOKING_NOT_FOUND)
+    }
+
+    @PutMapping("/{email}/bookings/{id}/start")
+    fun startBooking(@PathVariable email: String, @PathVariable id: Long): ResponseEntity<out Response> {
+        bookingService.updateBooking(id, UpdateBookingDto(startTime = LocalDateTime.now()))?.let {
+            return response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
+        }
+        return response(status = HttpStatus.NOT_FOUND, message = BOOKING_NOT_FOUND)
+    }
+
+    @PutMapping("/{email}/booking/{id}/complete")
+    fun completeBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: CompletionRequest): ResponseEntity<out Response> {
+        return if (bookingService.retrieveBooking(id)?.secret == dto.secret) {
+            bookingService.updateBooking(id, UpdateBookingDto(endTime = LocalDateTime.now(), status = BookingStatus.COMPLETED.name))
+            response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
+        } else response(status = HttpStatus.FORBIDDEN, message = SECRET_UNMATCHED)
     }
 
     @DeleteMapping("/{email}/phones/{phone}")

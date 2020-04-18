@@ -24,6 +24,7 @@ const val VERIFICATION_FAILED = "Invalid token, verification failed"
 const val TASK_FAILED = "Internal Error, Task Couldn't be completed"
 const val INVALID_CREDENTIALS = "Invalid email or password"
 const val NOT_VERIFIED = "Account not verified"
+const val SECRET_UNMATCHED = "The provided secret doesn't match"
 
 //Success Response String
 const val ACCOUNT_CREATED = "Account Created Successfully, Verification Pending"
