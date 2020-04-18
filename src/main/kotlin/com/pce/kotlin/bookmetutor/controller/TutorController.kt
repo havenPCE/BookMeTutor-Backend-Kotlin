@@ -125,7 +125,7 @@ class TutorController(val tutorService: TutorService, val bookingService: Bookin
         return response(status = HttpStatus.NOT_FOUND, message = BOOKING_NOT_FOUND)
     }
 
-    @PutMapping("/{email}/booking/{id}/complete")
+    @PutMapping("/{email}/bookings/{id}/complete")
     fun completeBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: CompletionRequest): ResponseEntity<out Response> {
         return if (bookingService.retrieveBooking(id)?.secret == dto.secret) {
             bookingService.updateBooking(id, UpdateBookingDto(endTime = LocalDateTime.now(), status = BookingStatus.COMPLETED.name))

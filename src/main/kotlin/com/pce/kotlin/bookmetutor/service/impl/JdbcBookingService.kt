@@ -83,6 +83,7 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
                                     )
                                 }
                             } ?: run {
+                                bookingRepo.deleteById(id)
                                 sendApology(student.email, student.firstName)
                                 null
                             }
