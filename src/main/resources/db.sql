@@ -7,6 +7,7 @@ CREATE TABLE public.admin
     admin_id       bigint                            NOT NULL,
     admin_email    text COLLATE pg_catalog."default" NOT NULL,
     admin_password text COLLATE pg_catalog."default" NOT NULL,
+    admin_verified boolean                           NOT NULL,
     CONSTRAINT admin_pk PRIMARY KEY (admin_id),
     CONSTRAINT admin_email_unique UNIQUE (admin_email)
 )
@@ -59,6 +60,80 @@ CREATE TABLE public.subject_topic
 ALTER TABLE public.subject_topic
     OWNER to bookmetutor;
 
+-- Table: public.student
+
+-- DROP TABLE public.student;
+
+CREATE TABLE public.student
+(
+    student_id bigint                            NOT NULL,
+    email      text COLLATE pg_catalog."default" NOT NULL,
+    password   text COLLATE pg_catalog."default" NOT NULL,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name  text COLLATE pg_catalog."default",
+    gender     text COLLATE pg_catalog."default" NOT NULL,
+    registered timestamp without time zone       NOT NULL,
+    verified   boolean                           NOT NULL,
+    CONSTRAINT student_pk PRIMARY KEY (student_id),
+    CONSTRAINT student_email_unique UNIQUE (email)
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.student
+    OWNER to bookmetutor;
+
+-- Table: public.student_phone
+
+-- DROP TABLE public.student_phone;
+
+CREATE TABLE public.student_phone
+(
+    student_id bigint                            NOT NULL,
+    phone      text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT student_phone_pk PRIMARY KEY (student_id, phone),
+    CONSTRAINT student_fk FOREIGN KEY (student_id)
+        REFERENCES public.student (student_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.student_phone
+    OWNER to bookmetutor;
+
+-- Table: public.student_address
+
+-- DROP TABLE public.student_address;
+
+CREATE TABLE public.student_address
+(
+    address_id bigint                            NOT NULL,
+    line_1     text COLLATE pg_catalog."default" NOT NULL,
+    line_2     text COLLATE pg_catalog."default",
+    landmark   text COLLATE pg_catalog."default",
+    city       text COLLATE pg_catalog."default" NOT NULL,
+    pin_code   text COLLATE pg_catalog."default" NOT NULL,
+    student_id bigint                            NOT NULL,
+    CONSTRAINT student_address_pk PRIMARY KEY (address_id),
+    CONSTRAINT student_fk FOREIGN KEY (student_id)
+        REFERENCES public.student (student_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.student_address
+    OWNER to bookmetutor;
+
 -- Table: public.tutor
 
 -- DROP TABLE public.tutor;
@@ -84,6 +159,28 @@ CREATE TABLE public.tutor
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor
+    OWNER to bookmetutor;
+
+-- Table: public.tutor_phone
+
+-- DROP TABLE public.tutor_phone;
+
+CREATE TABLE public.tutor_phone
+(
+    tutor_id bigint                            NOT NULL,
+    phone    text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT tutor_phone_pk PRIMARY KEY (tutor_id, phone),
+    CONSTRAINT tutor_fk FOREIGN KEY (tutor_id)
+        REFERENCES public.tutor (tutor_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.tutor_phone
     OWNER to bookmetutor;
 
 -- Table: public.tutor_address
@@ -112,28 +209,6 @@ CREATE TABLE public.tutor_address
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor_address
-    OWNER to bookmetutor;
-
--- Table: public.tutor_phone
-
--- DROP TABLE public.tutor_phone;
-
-CREATE TABLE public.tutor_phone
-(
-    tutor_id bigint                            NOT NULL,
-    phone    text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT tutor_phone_pk PRIMARY KEY (tutor_id, phone),
-    CONSTRAINT tutor_fk FOREIGN KEY (tutor_id)
-        REFERENCES public.tutor (tutor_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-    WITH (
-        OIDS = FALSE
-    )
-    TABLESPACE pg_default;
-
-ALTER TABLE public.tutor_phone
     OWNER to bookmetutor;
 
 -- Table: public.tutor_qualification
@@ -205,6 +280,50 @@ ALTER TABLE public.booking
 
 GRANT ALL ON TABLE public.booking TO bookmetutor;
 
+-- Table: public.booking_topic
+
+-- DROP TABLE public.booking_topic;
+
+CREATE TABLE public.booking_topic
+(
+    booking_id bigint                            NOT NULL,
+    topic      text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT booking_topic_pk PRIMARY KEY (booking_id, topic),
+    CONSTRAINT booking_fk FOREIGN KEY (booking_id)
+        REFERENCES public.booking (booking_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.booking_topic
+    OWNER to bookmetutor;
+
+-- Table: public.booking_reject
+
+-- DROP TABLE public.booking_reject;
+
+CREATE TABLE public.booking_reject
+(
+    booking_id bigint                            NOT NULL,
+    reject     text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT booking_reject_pk PRIMARY KEY (booking_id, reject),
+    CONSTRAINT booking_fk FOREIGN KEY (booking_id)
+        REFERENCES public.booking (booking_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE public.booking_reject
+    OWNER to bookmetutor;
+
 -- Table: public.booking_address
 
 -- DROP TABLE public.booking_address;
@@ -257,48 +376,4 @@ CREATE TABLE public.booking_invoice
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking_invoice
-    OWNER to bookmetutor;
-
--- Table: public.booking_reject
-
--- DROP TABLE public.booking_reject;
-
-CREATE TABLE public.booking_reject
-(
-    booking_id bigint                            NOT NULL,
-    reject     text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT booking_reject_pk PRIMARY KEY (booking_id, reject),
-    CONSTRAINT booking_fk FOREIGN KEY (booking_id)
-        REFERENCES public.booking (booking_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-    WITH (
-        OIDS = FALSE
-    )
-    TABLESPACE pg_default;
-
-ALTER TABLE public.booking_reject
-    OWNER to bookmetutor;
-
--- Table: public.booking_topic
-
--- DROP TABLE public.booking_topic;
-
-CREATE TABLE public.booking_topic
-(
-    booking_id bigint                            NOT NULL,
-    topic      text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT booking_topic_pk PRIMARY KEY (booking_id, topic),
-    CONSTRAINT booking_fk FOREIGN KEY (booking_id)
-        REFERENCES public.booking (booking_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-    WITH (
-        OIDS = FALSE
-    )
-    TABLESPACE pg_default;
-
-ALTER TABLE public.booking_topic
     OWNER to bookmetutor;
