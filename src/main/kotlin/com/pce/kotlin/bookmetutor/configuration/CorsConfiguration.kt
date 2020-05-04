@@ -31,4 +31,7 @@ class CorsConfiguration : WebMvcConfigurer {
             initialize()
         }
     }
+
+    @Bean
+    fun getCors(): WebMvcConfigurer = CorsConfiguration()
 }
