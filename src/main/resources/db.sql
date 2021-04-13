@@ -17,7 +17,7 @@ CREATE TABLE public.admin
     TABLESPACE pg_default;
 
 ALTER TABLE public.admin
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.subject
 
@@ -36,7 +36,7 @@ CREATE TABLE public.subject
     TABLESPACE pg_default;
 
 ALTER TABLE public.subject
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.subject_topic
 
@@ -58,7 +58,7 @@ CREATE TABLE public.subject_topic
     TABLESPACE pg_default;
 
 ALTER TABLE public.subject_topic
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.student
 
@@ -83,7 +83,7 @@ CREATE TABLE public.student
     TABLESPACE pg_default;
 
 ALTER TABLE public.student
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.student_phone
 
@@ -105,7 +105,7 @@ CREATE TABLE public.student_phone
     TABLESPACE pg_default;
 
 ALTER TABLE public.student_phone
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.student_address
 
@@ -132,7 +132,7 @@ CREATE TABLE public.student_address
     TABLESPACE pg_default;
 
 ALTER TABLE public.student_address
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.tutor
 
@@ -159,7 +159,7 @@ CREATE TABLE public.tutor
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.tutor_phone
 
@@ -181,7 +181,7 @@ CREATE TABLE public.tutor_phone
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor_phone
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.tutor_address
 
@@ -209,7 +209,7 @@ CREATE TABLE public.tutor_address
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor_address
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.tutor_qualification
 
@@ -235,7 +235,7 @@ CREATE TABLE public.tutor_qualification
     TABLESPACE pg_default;
 
 ALTER TABLE public.tutor_qualification
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.booking
 
@@ -276,9 +276,9 @@ CREATE TABLE public.booking
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
-GRANT ALL ON TABLE public.booking TO nqypnrfhucpdfb;
+GRANT ALL ON TABLE public.booking TO postgres;
 
 -- Table: public.booking_topic
 
@@ -300,7 +300,7 @@ CREATE TABLE public.booking_topic
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking_topic
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.booking_reject
 
@@ -322,7 +322,7 @@ CREATE TABLE public.booking_reject
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking_reject
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.booking_address
 
@@ -331,7 +331,7 @@ ALTER TABLE public.booking_reject
 CREATE TABLE public.booking_address
 (
     address_id bigint                            NOT NULL,
-    line_1     text COLLATE pg_catalog."default" NOT NULL,c
+    line_1     text COLLATE pg_catalog."default" NOT NULL,
     line_2     text COLLATE pg_catalog."default",
     landmark   text COLLATE pg_catalog."default",
     city       text COLLATE pg_catalog."default" NOT NULL,
@@ -350,7 +350,7 @@ CREATE TABLE public.booking_address
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking_address
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
 
 -- Table: public.booking_invoice
 
@@ -376,4 +376,4 @@ CREATE TABLE public.booking_invoice
     TABLESPACE pg_default;
 
 ALTER TABLE public.booking_invoice
-    OWNER to nqypnrfhucpdfb;
+    OWNER to postgres;
