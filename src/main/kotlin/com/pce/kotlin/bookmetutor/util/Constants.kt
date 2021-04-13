@@ -7,7 +7,7 @@ const val EXPIRATION_TIME = 28800000L
 const val SECRET = "SecretToEncrypt"
 const val TOKEN_PREFIX = "Bearer "
 const val HEADER_FIELD = "Authorization"
-const val BASE_URL = "http://bookmetutor-kotlin.ap-southeast-1.elasticbeanstalk.com"
+const val BASE_URL = "localhost:5000"
 
 // Error Response Strings
 const val UNAUTHORIZED = "Unauthorized Access (Invalid Token)"
