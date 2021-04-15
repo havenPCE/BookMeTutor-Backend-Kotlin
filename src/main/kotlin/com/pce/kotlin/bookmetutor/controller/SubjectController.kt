@@ -29,7 +29,10 @@ class SubjectController(val subjectService: SubjectService) : HandlesError() {
     }
 
     @GetMapping(value = [""], params = ["classNumber", "subjectName"])
-    fun retrieveSubject(@RequestParam classNumber: Int, @RequestParam subjectName: String): ResponseEntity<out Response> {
+    fun retrieveSubject(
+        @RequestParam classNumber: Int,
+        @RequestParam subjectName: String
+    ): ResponseEntity<out Response> {
         subjectService.retrieveSubject(classNumber, subjectName)?.let {
             return response(status = HttpStatus.OK, message = SUBJECT_INFO, payload = it)
         }

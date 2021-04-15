@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/admins")
-class AdminController(val adminService: AdminService, val tutorService: TutorService, val studentService: StudentService) : HandlesError() {
+class AdminController(
+    val adminService: AdminService,
+    val tutorService: TutorService,
+    val studentService: StudentService
+) : HandlesError() {
 
     @GetMapping("")
     fun retrieveAllAdmin(): ResponseEntity<out Response> {
@@ -75,7 +79,10 @@ class AdminController(val adminService: AdminService, val tutorService: TutorSer
     }
 
     @DeleteMapping("/{adminEmail}/students/{studentEmail}/")
-    fun removeStudent(@PathVariable adminEmail: String, @PathVariable studentEmail: String): ResponseEntity<out Response> {
+    fun removeStudent(
+        @PathVariable adminEmail: String,
+        @PathVariable studentEmail: String
+    ): ResponseEntity<out Response> {
         return if (studentService.removeStudent(studentEmail)) {
             response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
         } else response(status = HttpStatus.NOT_FOUND, message = STUDENT_NOT_FOUND)

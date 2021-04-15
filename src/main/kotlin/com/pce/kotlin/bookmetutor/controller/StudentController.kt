@@ -91,7 +91,10 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/")
-    fun updateStudentInfo(@PathVariable email: String, @RequestBody dto: UpdateStudentDto): ResponseEntity<out Response> {
+    fun updateStudentInfo(
+        @PathVariable email: String,
+        @RequestBody dto: UpdateStudentDto
+    ): ResponseEntity<out Response> {
         studentService.updateStudent(email, dto)?.let {
             return response(status = HttpStatus.OK, message = STUDENT_INFO, payload = it)
         }
@@ -99,7 +102,11 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/addresses/{id}")
-    fun updateStudentAddress(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateAddressDto): ResponseEntity<out Response> {
+    fun updateStudentAddress(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: UpdateAddressDto
+    ): ResponseEntity<out Response> {
         studentService.updateStudentAddress(id, dto)?.let {
             return response(status = HttpStatus.OK, message = ADDRESS_INFO, payload = it)
         }
@@ -107,7 +114,11 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/bookings/{id}/reschedule")
-    fun rescheduleBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
+    fun rescheduleBooking(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: UpdateBookingDto
+    ): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto.copy(rescheduled = true))?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
         }
@@ -115,7 +126,11 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/bookings/{id}/cancel")
-    fun cancelBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
+    fun cancelBooking(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: UpdateBookingDto
+    ): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto.copy(status = BookingStatus.CANCELLED.name))?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
         }
@@ -123,7 +138,11 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/bookings/{id}/feedback")
-    fun reviewBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
+    fun reviewBooking(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: UpdateBookingDto
+    ): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto)?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
         }
@@ -131,7 +150,11 @@ class StudentController(val studentService: StudentService, val bookingService: 
     }
 
     @PutMapping("/{email}/bookings/{id}/changeTopics")
-    fun changeBookingTopics(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: UpdateBookingDto): ResponseEntity<out Response> {
+    fun changeBookingTopics(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: UpdateBookingDto
+    ): ResponseEntity<out Response> {
         bookingService.updateBooking(id, dto)?.let {
             return response(status = HttpStatus.OK, message = BOOKING_INFO, payload = it)
         }

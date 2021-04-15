@@ -21,7 +21,12 @@ import java.time.LocalDateTime
 
 @Service
 @Transactional
-class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo, val studentRepo: StudentRepo, val emailService: EmailService) : BookingService {
+class JdbcBookingService(
+    val bookingRepo: BookingRepo,
+    val tutorRepo: TutorRepo,
+    val studentRepo: StudentRepo,
+    val emailService: EmailService
+) : BookingService {
     override fun createBooking(email: String, dto: CreateBookingDto): BookingDto? {
         return studentRepo.findByEmail(email)?.let { student ->
             tutorRepo.findTutorForAssignment(dto.address.city, emptyList())?.let { tutor ->
@@ -29,10 +34,10 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
                     sendCreation(student.email, tutor.email, student.firstName, tutor.firstName, booking.id)
                     tutorRepo.update(Tutor.fromDto(UpdateTutorDto(lastPicked = LocalDateTime.now()), tutor))
                     booking.toDto().copy(
-                            studentEmail = student.email,
-                            studentPhone = student.phones.firstOrNull(),
-                            tutorEmail = tutor.email,
-                            tutorPhone = tutor.phones.firstOrNull()
+                        studentEmail = student.email,
+                        studentPhone = student.phones.firstOrNull(),
+                        tutorEmail = tutor.email,
+                        tutorPhone = tutor.phones.firstOrNull()
                     )
                 }
             } ?: run {
@@ -70,24 +75,24 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
         return bookingRepo.findById(id)?.let { booking ->
             booking.address?.let { address ->
                 booking.studentId?.let { studentRepo.findById(it) }
-                        ?.let { student ->
-                            tutorRepo.findTutorForAssignment(address.city, booking.rejects.toList())?.let { tutor ->
-                                bookingRepo.update(booking, tutor.id)?.let {
-                                    sendAvailable(tutor.email, tutor.firstName, booking.id)
-                                    tutorRepo.update(Tutor.fromDto(UpdateTutorDto(lastPicked = LocalDateTime.now()), tutor))
-                                    it.toDto().copy(
-                                            studentEmail = student.email,
-                                            studentPhone = student.phones.firstOrNull(),
-                                            tutorEmail = tutor.email,
-                                            tutorPhone = tutor.phones.firstOrNull()
-                                    )
-                                }
-                            } ?: run {
-                                bookingRepo.deleteById(id)
-                                sendApology(student.email, student.firstName)
-                                null
+                    ?.let { student ->
+                        tutorRepo.findTutorForAssignment(address.city, booking.rejects.toList())?.let { tutor ->
+                            bookingRepo.update(booking, tutor.id)?.let {
+                                sendAvailable(tutor.email, tutor.firstName, booking.id)
+                                tutorRepo.update(Tutor.fromDto(UpdateTutorDto(lastPicked = LocalDateTime.now()), tutor))
+                                it.toDto().copy(
+                                    studentEmail = student.email,
+                                    studentPhone = student.phones.firstOrNull(),
+                                    tutorEmail = tutor.email,
+                                    tutorPhone = tutor.phones.firstOrNull()
+                                )
                             }
+                        } ?: run {
+                            bookingRepo.deleteById(id)
+                            sendApology(student.email, student.firstName)
+                            null
                         }
+                    }
             }
         }
     }
@@ -98,10 +103,10 @@ class JdbcBookingService(val bookingRepo: BookingRepo, val tutorRepo: TutorRepo,
                 studentRepo.findById(studentId)?.let { student ->
                     tutorRepo.findById(tutorId)?.let { tutor ->
                         booking.toDto().copy(
-                                studentEmail = student.email,
-                                studentPhone = student.phones.firstOrNull(),
-                                tutorEmail = tutor.email,
-                                tutorPhone = tutor.phones.firstOrNull()
+                            studentEmail = student.email,
+                            studentPhone = student.phones.firstOrNull(),
+                            tutorEmail = tutor.email,
+                            tutorPhone = tutor.phones.firstOrNull()
                         )
                     }
                 }

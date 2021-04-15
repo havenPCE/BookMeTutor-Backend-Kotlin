@@ -14,13 +14,13 @@ class JdbcStudentAddressRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : Stu
 
     val studentAddressRowMapper: (ResultSet, Int) -> StudentAddress = { rs, _ ->
         StudentAddress(
-                id = rs.getLong("address_id"),
-                line1 = rs.getString("line_1"),
-                line2 = rs.getString("line_2"),
-                landmark = rs.getString("landmark"),
-                city = rs.getString("city"),
-                pinCode = rs.getString("pin_code"),
-                studentId = rs.getLong("student_id")
+            id = rs.getLong("address_id"),
+            line1 = rs.getString("line_1"),
+            line2 = rs.getString("line_2"),
+            landmark = rs.getString("landmark"),
+            city = rs.getString("city"),
+            pinCode = rs.getString("pin_code"),
+            studentId = rs.getLong("student_id")
         )
     }
 

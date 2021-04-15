@@ -17,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class JdbcTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddressRepo,
-                       val studentRepo: StudentRepo, val passwordEncoder: BCryptPasswordEncoder) : TutorService {
+class JdbcTutorService(
+    val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddressRepo,
+    val studentRepo: StudentRepo, val passwordEncoder: BCryptPasswordEncoder
+) : TutorService {
     override fun retrieveAllTutors(): List<TutorDto> {
         return tutorRepo.findAll().mapNotNull { toDto(it) }
     }
@@ -32,9 +34,13 @@ class JdbcTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddr
     }
 
     override fun createTutor(dto: CreateTutorDto): TutorDto? {
-        return tutorRepo.save(Tutor.fromDto(dto.copy(
-                password = passwordEncoder.encode(dto.password)
-        )))?.let { toDto(it) }
+        return tutorRepo.save(
+            Tutor.fromDto(
+                dto.copy(
+                    password = passwordEncoder.encode(dto.password)
+                )
+            )
+        )?.let { toDto(it) }
     }
 
     override fun updateTutor(email: String, dto: UpdateTutorDto): TutorDto? {
@@ -50,17 +56,21 @@ class JdbcTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddr
 
     override fun addTutorPhone(email: String, phone: String): TutorDto? {
         return tutorRepo.findByEmail(email)?.let { tutor ->
-            tutorRepo.update(tutor.copy(
+            tutorRepo.update(
+                tutor.copy(
                     phones = tutor.phones.plus(phone)
-            ))
+                )
+            )
         }?.let { toDto(it) }
     }
 
     override fun removeTutorPhone(email: String, phone: String): TutorDto? {
         return tutorRepo.findByEmail(email)?.let { tutor ->
-            tutorRepo.update(tutor.copy(
+            tutorRepo.update(
+                tutor.copy(
                     phones = tutor.phones.minus(phone)
-            ))
+                )
+            )
         }?.let { toDto(it) }
     }
 
@@ -72,18 +82,18 @@ class JdbcTutorService(val tutorRepo: TutorRepo, val tutorAddressRepo: TutorAddr
 
     fun toDto(tutor: Tutor): TutorDto? {
         return tutor.toDto().copy(
-                bookings = tutor.bookings.mapNotNull { booking ->
-                    booking.studentId?.let { id ->
-                        studentRepo.findById(id)?.let {
-                            booking.toDto().copy(
-                                    tutorEmail = tutor.email,
-                                    tutorPhone = tutor.phones.firstOrNull(),
-                                    studentEmail = it.email,
-                                    studentPhone = it.phones.firstOrNull()
-                            )
-                        }
+            bookings = tutor.bookings.mapNotNull { booking ->
+                booking.studentId?.let { id ->
+                    studentRepo.findById(id)?.let {
+                        booking.toDto().copy(
+                            tutorEmail = tutor.email,
+                            tutorPhone = tutor.phones.firstOrNull(),
+                            studentEmail = it.email,
+                            studentPhone = it.phones.firstOrNull()
+                        )
                     }
                 }
+            }
         )
     }
 

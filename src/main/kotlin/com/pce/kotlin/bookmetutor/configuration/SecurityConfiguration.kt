@@ -21,26 +21,28 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfiguration(@Qualifier("hybridDetailsService")
-                            private val userDetailsService: UserDetailsService,
-                            private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
-                            private val jwtRequestFilter: JwtRequestFilter,
-                            private val encoder: BCryptPasswordEncoder) : WebSecurityConfigurerAdapter() {
+class SecurityConfiguration(
+    @Qualifier("hybridDetailsService")
+    private val userDetailsService: UserDetailsService,
+    private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
+    private val jwtRequestFilter: JwtRequestFilter,
+    private val encoder: BCryptPasswordEncoder
+) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
-                .cors()
-                .and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/", "/account/**", "/subjects/**", "/subjects").permitAll()
-                .antMatchers("/students/**", "/students").hasAuthority(Authority.STUDENT.name)
-                .antMatchers("/tutors/**", "/tutors").hasAuthority(Authority.TUTOR.name)
-                .antMatchers("/admins/**", "/admins").hasAuthority(Authority.ADMIN.name)
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .cors()
+            .and()
+            .csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/", "/account/**", "/subjects/**", "/subjects").permitAll()
+            .antMatchers("/students/**", "/students").hasAuthority(Authority.STUDENT.name)
+            .antMatchers("/tutors/**", "/tutors").hasAuthority(Authority.TUTOR.name)
+            .antMatchers("/admins/**", "/admins").hasAuthority(Authority.ADMIN.name)
+            .anyRequest().authenticated()
+            .and()
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
 

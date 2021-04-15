@@ -15,18 +15,18 @@ class JdbcAdminRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : AdminRepo {
 
     val adminRowMapper: (ResultSet, Int) -> Admin = { rs, _ ->
         Admin(
-                id = rs.getLong("admin_id"),
-                email = rs.getString("admin_email"),
-                password = rs.getString("admin_password"),
-                verified = rs.getBoolean("admin_verified")
+            id = rs.getLong("admin_id"),
+            email = rs.getString("admin_email"),
+            password = rs.getString("admin_password"),
+            verified = rs.getBoolean("admin_verified")
         )
     }
 
     val userRowMapper: (ResultSet, Int) -> User = { rs, _ ->
         User(
-                userName = rs.getString("admin_email"),
-                password = rs.getString("admin_password"),
-                verified = rs.getBoolean("admin_verified")
+            userName = rs.getString("admin_email"),
+            password = rs.getString("admin_password"),
+            verified = rs.getBoolean("admin_verified")
         )
     }
 

@@ -14,32 +14,34 @@ import java.sql.ResultSet
 
 @Repository
 @Transactional(rollbackFor = [Throwable::class])
-class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
-                      val invoiceRepo: JdbcInvoiceRepo,
-                      val bookingAddressRepo: JdbcBookingAddressRepo) : BookingRepo {
+class JdbcBookingRepo(
+    val jdbcTemplate: NamedParameterJdbcTemplate,
+    val invoiceRepo: JdbcInvoiceRepo,
+    val bookingAddressRepo: JdbcBookingAddressRepo
+) : BookingRepo {
 
     val bookingIdRowMapper: (ResultSet, Int) -> Long = { rs, _ -> rs.getLong("booking_id") }
     val bookingRowMapper: (ResultSet, Int) -> Booking = { rs, _ ->
         Booking(
-                id = rs.getLong("booking_id"),
-                board = Board.valueOf(rs.getString("board")),
-                cancellationReason = rs.getString("cancellation_reason"),
-                classNumber = rs.getInt("class_number"),
-                rejects = emptySet(),
-                rescheduled = rs.getBoolean("rescheduled"),
-                reschedulingReason = rs.getString("rescheduling_reason"),
-                comment = rs.getString("comment"),
-                deadline = rs.getTimestamp("deadline").toLocalDateTime(),
-                scheduledTime = rs.getTimestamp("scheduled_time").toLocalDateTime(),
-                score = rs.getInt("score"),
-                secret = rs.getString("secret"),
-                startTime = rs.getTimestamp("start_time")?.toLocalDateTime(),
-                endTime = rs.getTimestamp("end_time")?.toLocalDateTime(),
-                status = BookingStatus.valueOf(rs.getString("status")),
-                subject = rs.getString("subject"),
-                topics = emptySet(),
-                studentId = rs.getLong("student_id"),
-                tutorId = rs.getLong("tutor_id")
+            id = rs.getLong("booking_id"),
+            board = Board.valueOf(rs.getString("board")),
+            cancellationReason = rs.getString("cancellation_reason"),
+            classNumber = rs.getInt("class_number"),
+            rejects = emptySet(),
+            rescheduled = rs.getBoolean("rescheduled"),
+            reschedulingReason = rs.getString("rescheduling_reason"),
+            comment = rs.getString("comment"),
+            deadline = rs.getTimestamp("deadline").toLocalDateTime(),
+            scheduledTime = rs.getTimestamp("scheduled_time").toLocalDateTime(),
+            score = rs.getInt("score"),
+            secret = rs.getString("secret"),
+            startTime = rs.getTimestamp("start_time")?.toLocalDateTime(),
+            endTime = rs.getTimestamp("end_time")?.toLocalDateTime(),
+            status = BookingStatus.valueOf(rs.getString("status")),
+            subject = rs.getString("subject"),
+            topics = emptySet(),
+            studentId = rs.getLong("student_id"),
+            tutorId = rs.getLong("tutor_id")
         )
     }
     val bookingRejectRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("reject") }
@@ -49,12 +51,15 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         val (selectBookingQuery, selectBookingParams) = BookingQuery.selectById(id)
         val (selectBookingRejectQuery, selectBookingRejectParams) = BookingQuery.selectReject(id)
         val (selectBookingTopicQuery, selectBookingTopicParams) = BookingQuery.selectTopic(id)
-        var booking: Booking? = jdbcTemplate.query(selectBookingQuery, selectBookingParams, bookingRowMapper).firstOrNull()
+        var booking: Booking? =
+            jdbcTemplate.query(selectBookingQuery, selectBookingParams, bookingRowMapper).firstOrNull()
         booking = booking?.copy(
-                rejects = jdbcTemplate.query(selectBookingRejectQuery, selectBookingRejectParams, bookingRejectRowMapper).toSet(),
-                topics = jdbcTemplate.query(selectBookingTopicQuery, selectBookingTopicParams, bookingTopicRowMapper).toSet(),
-                invoice = invoiceRepo.findByBookingId(booking.id),
-                address = bookingAddressRepo.findByBookingId(booking.id)
+            rejects = jdbcTemplate.query(selectBookingRejectQuery, selectBookingRejectParams, bookingRejectRowMapper)
+                .toSet(),
+            topics = jdbcTemplate.query(selectBookingTopicQuery, selectBookingTopicParams, bookingTopicRowMapper)
+                .toSet(),
+            invoice = invoiceRepo.findByBookingId(booking.id),
+            address = bookingAddressRepo.findByBookingId(booking.id)
         )
         return booking
     }
@@ -78,8 +83,13 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
     }
 
     override fun update(booking: Booking, tutorId: Long?): Booking? {
-        val (updateBookingQuery, updateBookingParams) = tutorId?.let { BookingQuery.updateBookingWithTutor(it, booking) }
-                ?: BookingQuery.updateBooking(booking)
+        val (updateBookingQuery, updateBookingParams) = tutorId?.let {
+            BookingQuery.updateBookingWithTutor(
+                it,
+                booking
+            )
+        }
+            ?: BookingQuery.updateBooking(booking)
         val (deleteTopicQuery, deleteTopicParams) = BookingQuery.deleteFromTopic(booking.id)
         val (deleteRejectQuery, deleteRejectParams) = BookingQuery.deleteFromReject(booking.id)
         val insertRejectQuery = BookingQuery.insertIntoReject(booking.id)
@@ -108,22 +118,24 @@ class JdbcBookingRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
     override fun findAll(): List<Booking> {
         val selectQuery = """SELECT booking_id FROM public.booking;"""
         return jdbcTemplate.query(selectQuery, bookingIdRowMapper)
-                .mapNotNull { findById(it) }
+            .mapNotNull { findById(it) }
     }
 
     override fun findByStudentId(studentId: Long): List<Booking> {
         val (selectQuery, selectParams) = BookingQuery.selectByStudentId(studentId)
         return jdbcTemplate.query(selectQuery, selectParams, bookingIdRowMapper)
-                .mapNotNull { findById(it) }
+            .mapNotNull { findById(it) }
     }
 
     override fun findByTutorId(tutorId: Long): List<Booking> {
         val (selectQuery, selectParams) = BookingQuery.selectByTutorId(tutorId)
         return jdbcTemplate.query(selectQuery, selectParams, bookingIdRowMapper)
-                .mapNotNull { findById(it) }
+            .mapNotNull { findById(it) }
     }
 
-    fun createRejectParams(rejects: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(rejects.map { mutableMapOf("reject" to it) }.toTypedArray())
+    fun createRejectParams(rejects: Collection<String>): Array<SqlParameterSource> =
+        SqlParameterSourceUtils.createBatch(rejects.map { mutableMapOf("reject" to it) }.toTypedArray())
 
-    fun createTopicParams(topics: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(topics.map { mutableMapOf("topic" to it) }.toTypedArray())
+    fun createTopicParams(topics: Collection<String>): Array<SqlParameterSource> =
+        SqlParameterSourceUtils.createBatch(topics.map { mutableMapOf("topic" to it) }.toTypedArray())
 }

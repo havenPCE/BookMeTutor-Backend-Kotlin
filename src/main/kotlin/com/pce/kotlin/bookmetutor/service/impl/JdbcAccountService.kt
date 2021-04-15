@@ -13,9 +13,9 @@ class JdbcAccountService(val jdbcTemplate: JdbcTemplate) : AccountService {
         val (adminQuery, adminParams) = AccountQuery.admin(email)
 
         val result: Int = maxOf(
-                jdbcTemplate.queryForObject(studentQuery, studentParams, Int::class.java),
-                jdbcTemplate.queryForObject(tutorQuery, tutorParams, Int::class.java),
-                jdbcTemplate.queryForObject(adminQuery, adminParams, Int::class.java)
+            jdbcTemplate.queryForObject(studentQuery, studentParams, Int::class.java),
+            jdbcTemplate.queryForObject(tutorQuery, tutorParams, Int::class.java),
+            jdbcTemplate.queryForObject(adminQuery, adminParams, Int::class.java)
         )
         return result > 0
     }

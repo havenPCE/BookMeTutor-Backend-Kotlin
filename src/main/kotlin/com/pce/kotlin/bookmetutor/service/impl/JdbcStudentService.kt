@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class JdbcStudentService(val studentRepo: StudentRepo, val studentAddressRepo: StudentAddressRepo,
-                         val passwordEncoder: BCryptPasswordEncoder, val tutorRepo: TutorRepo) : StudentService {
+class JdbcStudentService(
+    val studentRepo: StudentRepo, val studentAddressRepo: StudentAddressRepo,
+    val passwordEncoder: BCryptPasswordEncoder, val tutorRepo: TutorRepo
+) : StudentService {
 
     override fun retrieveAllStudents(): List<StudentDto> {
         return studentRepo.findAll().mapNotNull { toDto(it) }
@@ -34,9 +36,13 @@ class JdbcStudentService(val studentRepo: StudentRepo, val studentAddressRepo: S
     }
 
     override fun createStudent(dto: CreateStudentDto): StudentDto? {
-        return studentRepo.save(Student.fromDto(dto.copy(
-                password = passwordEncoder.encode(dto.password)
-        )))?.let { toDto(it) }
+        return studentRepo.save(
+            Student.fromDto(
+                dto.copy(
+                    password = passwordEncoder.encode(dto.password)
+                )
+            )
+        )?.let { toDto(it) }
     }
 
     override fun updateStudent(email: String, dto: UpdateStudentDto): StudentDto? {
@@ -68,34 +74,38 @@ class JdbcStudentService(val studentRepo: StudentRepo, val studentAddressRepo: S
 
     override fun addStudentPhone(email: String, phone: String): StudentDto? {
         return studentRepo.findByEmail(email)?.let { student ->
-            studentRepo.update(student.copy(
+            studentRepo.update(
+                student.copy(
                     phones = student.phones.plus(phone)
-            ))
+                )
+            )
         }?.let { toDto(it) }
     }
 
     override fun removeStudentPhone(email: String, phone: String): StudentDto? {
         return studentRepo.findByEmail(email)?.let { student ->
-            studentRepo.update(student.copy(
+            studentRepo.update(
+                student.copy(
                     phones = student.phones.minus(phone)
-            ))
+                )
+            )
         }?.let { toDto(it) }
     }
 
     fun toDto(student: Student): StudentDto? {
         return student.toDto().copy(
-                bookings = student.bookings.mapNotNull { booking ->
-                    booking.tutorId?.let { id ->
-                        tutorRepo.findById(id)?.let {
-                            booking.toDto().copy(
-                                    studentEmail = student.email,
-                                    studentPhone = student.phones.firstOrNull(),
-                                    tutorEmail = it.email,
-                                    tutorPhone = it.phones.firstOrNull()
-                            )
-                        }
+            bookings = student.bookings.mapNotNull { booking ->
+                booking.tutorId?.let { id ->
+                    tutorRepo.findById(id)?.let {
+                        booking.toDto().copy(
+                            studentEmail = student.email,
+                            studentPhone = student.phones.firstOrNull(),
+                            tutorEmail = it.email,
+                            tutorPhone = it.phones.firstOrNull()
+                        )
                     }
                 }
+            }
         )
     }
 

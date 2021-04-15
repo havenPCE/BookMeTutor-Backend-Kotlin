@@ -17,7 +17,11 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/tutors")
-class TutorController(val tutorService: TutorService, val bookingService: BookingService, val emailService: EmailService) : HandlesError() {
+class TutorController(
+    val tutorService: TutorService,
+    val bookingService: BookingService,
+    val emailService: EmailService
+) : HandlesError() {
 
     @GetMapping("/{email}/")
     fun retrieveTutor(@PathVariable email: String): ResponseEntity<out Response> {
@@ -84,7 +88,10 @@ class TutorController(val tutorService: TutorService, val bookingService: Bookin
     }
 
     @PutMapping("/{email}/address")
-    fun updateTutorAddress(@PathVariable email: String, @RequestBody dto: UpdateAddressDto): ResponseEntity<out Response> {
+    fun updateTutorAddress(
+        @PathVariable email: String,
+        @RequestBody dto: UpdateAddressDto
+    ): ResponseEntity<out Response> {
         tutorService.retrieveTutor(email)?.let { tutor ->
             tutor.address?.id?.let {
                 tutorService.updateTutorAddress(it, dto)?.let { address ->
@@ -126,9 +133,16 @@ class TutorController(val tutorService: TutorService, val bookingService: Bookin
     }
 
     @PutMapping("/{email}/bookings/{id}/complete")
-    fun completeBooking(@PathVariable email: String, @PathVariable id: Long, @RequestBody dto: CompletionRequest): ResponseEntity<out Response> {
+    fun completeBooking(
+        @PathVariable email: String,
+        @PathVariable id: Long,
+        @RequestBody dto: CompletionRequest
+    ): ResponseEntity<out Response> {
         return if (bookingService.retrieveBooking(id)?.secret == dto.secret) {
-            bookingService.updateBooking(id, UpdateBookingDto(endTime = LocalDateTime.now(), status = BookingStatus.COMPLETED.name))
+            bookingService.updateBooking(
+                id,
+                UpdateBookingDto(endTime = LocalDateTime.now(), status = BookingStatus.COMPLETED.name)
+            )
             response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
         } else response(status = HttpStatus.FORBIDDEN, message = SECRET_UNMATCHED)
     }

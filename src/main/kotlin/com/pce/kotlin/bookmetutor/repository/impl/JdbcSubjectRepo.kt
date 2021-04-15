@@ -17,10 +17,10 @@ class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRep
 
     val subjectRowMapper: (ResultSet, Int) -> Subject = { rs, _ ->
         Subject(
-                id = rs.getLong("subject_id"),
-                subjectName = SubjectName.valueOf(rs.getString("subject_name")),
-                classNumber = rs.getInt("class_number"),
-                topics = emptySet()
+            id = rs.getLong("subject_id"),
+            subjectName = SubjectName.valueOf(rs.getString("subject_name")),
+            classNumber = rs.getInt("class_number"),
+            topics = emptySet()
         )
     }
     val subjectIdRowMapper: (ResultSet, Int) -> Long = { rs, _ -> rs.getLong("subject_id") }
@@ -30,21 +30,26 @@ class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRep
         val (selectFromSubjectQuery, selectFromSubjectParams) = SubjectQuery.selectByIdFromSubject(id)
         val (selectFromTopicQuery, selectFromTopicParams) = SubjectQuery.selectByIdFromTopic(id)
 
-        var subject: Subject? = jdbcTemplate.query(selectFromSubjectQuery, selectFromSubjectParams, subjectRowMapper).firstOrNull()
+        var subject: Subject? =
+            jdbcTemplate.query(selectFromSubjectQuery, selectFromSubjectParams, subjectRowMapper).firstOrNull()
         subject = subject?.copy(
-                topics = jdbcTemplate.query(selectFromTopicQuery, selectFromTopicParams, topicRowMapper).toSet()
+            topics = jdbcTemplate.query(selectFromTopicQuery, selectFromTopicParams, topicRowMapper).toSet()
         )
         return subject
     }
 
     override fun findBySubjectNameAndClassNumber(subjectName: SubjectName, classNumber: Int): Subject? {
-        val (selectFromSubjectQuery, selectFromSubjectParams) = SubjectQuery.selectBySubjectNameAndClassNumberFromSubject(subjectName, classNumber)
+        val (selectFromSubjectQuery, selectFromSubjectParams) = SubjectQuery.selectBySubjectNameAndClassNumberFromSubject(
+            subjectName,
+            classNumber
+        )
 
-        var subject: Subject? = jdbcTemplate.query(selectFromSubjectQuery, selectFromSubjectParams, subjectRowMapper).firstOrNull()
+        var subject: Subject? =
+            jdbcTemplate.query(selectFromSubjectQuery, selectFromSubjectParams, subjectRowMapper).firstOrNull()
         subject = subject?.let {
             val (selectFromTopicQuery, selectFromTopicParams) = SubjectQuery.selectByIdFromTopic(it.id)
             it.copy(
-                    topics = jdbcTemplate.query(selectFromTopicQuery, selectFromTopicParams, topicRowMapper).toSet()
+                topics = jdbcTemplate.query(selectFromTopicQuery, selectFromTopicParams, topicRowMapper).toSet()
             )
         }
         return subject
@@ -90,5 +95,6 @@ class JdbcSubjectRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : SubjectRep
         return jdbcTemplate.query(selectQuery, subjectIdRowMapper).mapNotNull { findById(it) }
     }
 
-    fun createTopicParams(topics: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(topics.map { mutableMapOf("topic" to it) }.toTypedArray())
+    fun createTopicParams(topics: Collection<String>): Array<SqlParameterSource> =
+        SqlParameterSourceUtils.createBatch(topics.map { mutableMapOf("topic" to it) }.toTypedArray())
 }

@@ -16,19 +16,30 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class JwtRequestFilter(@Qualifier("hybridDetailsService") val userDetailsService: UserDetailsService, val jwtTokenService: JwtTokenService) : OncePerRequestFilter() {
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+class JwtRequestFilter(
+    @Qualifier("hybridDetailsService") val userDetailsService: UserDetailsService,
+    val jwtTokenService: JwtTokenService
+) : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         val tokenHeader: String? = request.getHeader(HEADER_FIELD)
         val token: String? = tokenHeader.takeIf { it != null && it.startsWith(TOKEN_PREFIX) }?.substring(7)
         token?.let { t ->
             val userName: String? = jwtTokenService.retrieveUserNameFromToken(t)
             userName?.let { u ->
                 val userDetails: UserDetails = userDetailsService.loadUserByUsername(u)
-                if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.validateToken(t, userDetails)) {
+                if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.validateToken(
+                        t,
+                        userDetails
+                    )
+                ) {
                     val auth = UsernamePasswordAuthenticationToken(
-                            userDetails.username,
-                            userDetails.password,
-                            userDetails.authorities
+                        userDetails.username,
+                        userDetails.password,
+                        userDetails.authorities
                     )
                     auth.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = auth

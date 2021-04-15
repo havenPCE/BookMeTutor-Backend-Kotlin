@@ -14,11 +14,11 @@ class JdbcTutorQualificationRepo(val jdbcTemplate: NamedParameterJdbcTemplate) :
 
     val qualificationRowMapper: (ResultSet, Int) -> TutorQualification = { rs, _ ->
         TutorQualification(
-                id = rs.getLong("qualification_id"),
-                degree = rs.getString("degree"),
-                university = rs.getString("university"),
-                percentile = rs.getDouble("percentile"),
-                tutorId = rs.getLong("tutor_id")
+            id = rs.getLong("qualification_id"),
+            degree = rs.getString("degree"),
+            university = rs.getString("university"),
+            percentile = rs.getDouble("percentile"),
+            tutorId = rs.getLong("tutor_id")
         )
     }
 

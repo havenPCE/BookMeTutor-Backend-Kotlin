@@ -14,13 +14,13 @@ class JdbcBookingAddressRepo(val jdbcTemplate: NamedParameterJdbcTemplate) : Boo
 
     val bookingAddressRowMapper: (ResultSet, Int) -> BookingAddress = { rs, _ ->
         BookingAddress(
-                id = rs.getLong("address_id"),
-                line1 = rs.getString("line_1"),
-                line2 = rs.getString("line_2"),
-                landmark = rs.getString("landmark"),
-                city = rs.getString("city"),
-                pinCode = rs.getString("pin_code"),
-                bookingId = rs.getLong("booking_id")
+            id = rs.getLong("address_id"),
+            line1 = rs.getString("line_1"),
+            line2 = rs.getString("line_2"),
+            landmark = rs.getString("landmark"),
+            city = rs.getString("city"),
+            pinCode = rs.getString("pin_code"),
+            bookingId = rs.getLong("booking_id")
         )
     }
 

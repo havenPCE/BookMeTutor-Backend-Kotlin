@@ -33,12 +33,12 @@ class SimpleJwtTokenService : JwtTokenService {
 
     override fun generate(subject: String): String {
         return Jwts.builder()
-                .setClaims(mutableMapOf<String, Any>())
-                .setSubject(subject)
-                .setIssuedAt(Date())
-                .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET)
-                .compact()
+            .setClaims(mutableMapOf<String, Any>())
+            .setSubject(subject)
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .signWith(SignatureAlgorithm.HS256, SECRET)
+            .compact()
     }
 
     override fun validateToken(token: String, userDetails: UserDetails): Boolean {

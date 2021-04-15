@@ -17,30 +17,32 @@ import java.sql.ResultSet
 
 @Repository
 @Transactional(rollbackFor = [Throwable::class])
-class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
-                      val studentAddressRepo: StudentAddressRepo,
-                      val bookingRepo: BookingRepo) : StudentRepo {
+class JdbcStudentRepo(
+    val jdbcTemplate: NamedParameterJdbcTemplate,
+    val studentAddressRepo: StudentAddressRepo,
+    val bookingRepo: BookingRepo
+) : StudentRepo {
 
     val studentIdRowMapper: (ResultSet, Int) -> Long = { rs, _ -> rs.getLong("student_id") }
     val phoneRowMapper: (ResultSet, Int) -> String = { rs, _ -> rs.getString("phone") }
     val studentRowMapper: (ResultSet, Int) -> Student = { rs, _ ->
         Student(
-                id = rs.getLong("student_id"),
-                email = rs.getString("email"),
-                password = rs.getString("password"),
-                firstName = rs.getString("first_name"),
-                lastName = rs.getString("last_name"),
-                gender = Gender.valueOf(rs.getString("gender")),
-                phones = emptySet(),
-                registered = rs.getTimestamp("registered").toLocalDateTime(),
-                verified = rs.getBoolean("verified")
+            id = rs.getLong("student_id"),
+            email = rs.getString("email"),
+            password = rs.getString("password"),
+            firstName = rs.getString("first_name"),
+            lastName = rs.getString("last_name"),
+            gender = Gender.valueOf(rs.getString("gender")),
+            phones = emptySet(),
+            registered = rs.getTimestamp("registered").toLocalDateTime(),
+            verified = rs.getBoolean("verified")
         )
     }
     val userRowMapper: (ResultSet, Int) -> User = { rs, _ ->
         User(
-                userName = rs.getString("email"),
-                password = rs.getString("password"),
-                verified = rs.getBoolean("verified")
+            userName = rs.getString("email"),
+            password = rs.getString("password"),
+            verified = rs.getBoolean("verified")
         )
     }
 
@@ -50,9 +52,9 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         student = student?.let {
             val (selectPhoneQuery, selectPhoneParams) = StudentQuery.selectPhone(it.id)
             it.copy(
-                    phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
-                    addresses = studentAddressRepo.findByStudentId(it.id).toSet(),
-                    bookings = bookingRepo.findByStudentId(it.id).toSet()
+                phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
+                addresses = studentAddressRepo.findByStudentId(it.id).toSet(),
+                bookings = bookingRepo.findByStudentId(it.id).toSet()
             )
         }
         return student
@@ -68,9 +70,9 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         student = student?.let {
             val (selectPhoneQuery, selectPhoneParams) = StudentQuery.selectPhone(it.id)
             it.copy(
-                    phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
-                    addresses = studentAddressRepo.findByStudentId(it.id).toSet(),
-                    bookings = bookingRepo.findByStudentId(it.id).toSet()
+                phones = jdbcTemplate.query(selectPhoneQuery, selectPhoneParams, phoneRowMapper).toSet(),
+                addresses = studentAddressRepo.findByStudentId(it.id).toSet(),
+                bookings = bookingRepo.findByStudentId(it.id).toSet()
             )
         }
         return student
@@ -113,7 +115,7 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
     override fun findAll(): List<Student> {
         val selectQuery = """SELECT student_id FROM public.student;"""
         return jdbcTemplate.query(selectQuery, studentIdRowMapper)
-                .mapNotNull { findById(it) }
+            .mapNotNull { findById(it) }
     }
 
     override fun findUser(email: String): User? {
@@ -121,5 +123,6 @@ class JdbcStudentRepo(val jdbcTemplate: NamedParameterJdbcTemplate,
         return jdbcTemplate.query(query, params, userRowMapper).firstOrNull()
     }
 
-    fun phoneBatchParams(phones: Collection<String>): Array<SqlParameterSource> = SqlParameterSourceUtils.createBatch(phones.map { mutableMapOf("phone" to it) }.toTypedArray())
+    fun phoneBatchParams(phones: Collection<String>): Array<SqlParameterSource> =
+        SqlParameterSourceUtils.createBatch(phones.map { mutableMapOf("phone" to it) }.toTypedArray())
 }

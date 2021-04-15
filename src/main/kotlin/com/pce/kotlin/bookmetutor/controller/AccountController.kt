@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/account")
-class AccountController(val studentService: StudentService, val tutorService: TutorService,
-                        val adminService: AdminService, val accountService: AccountService,
-                        val emailService: EmailService, val jwtTokenService: JwtTokenService,
-                        val authenticationManager: AuthenticationManager) : HandlesError() {
+class AccountController(
+    val studentService: StudentService, val tutorService: TutorService,
+    val adminService: AdminService, val accountService: AccountService,
+    val emailService: EmailService, val jwtTokenService: JwtTokenService,
+    val authenticationManager: AuthenticationManager
+) : HandlesError() {
 
     @PostMapping("/register-admin")
     fun registerAdmin(@RequestBody dto: CreateAdminDto): ResponseEntity<out Response> {
@@ -56,7 +58,11 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
     }
 
     @GetMapping("/verify")
-    fun verify(@RequestParam email: String, @RequestParam jwt: String, @RequestParam role: String): ResponseEntity<String> {
+    fun verify(
+        @RequestParam email: String,
+        @RequestParam jwt: String,
+        @RequestParam role: String
+    ): ResponseEntity<String> {
         val userName: String? = jwtTokenService.retrieveUserNameFromToken(jwt)
         userName?.let {
             return if (userName == email) {
@@ -109,7 +115,11 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
     }
 
     @GetMapping("/reset")
-    fun resetPassword(@RequestParam email: String, @RequestParam jwt: String, @RequestParam role: String): ResponseEntity<String> {
+    fun resetPassword(
+        @RequestParam email: String,
+        @RequestParam jwt: String,
+        @RequestParam role: String
+    ): ResponseEntity<String> {
         val text = jwtTokenService.retrieveUserNameFromToken(jwt)?.split(",")
         val userName = text?.get(0)
         val password = text?.get(1)
@@ -144,5 +154,4 @@ class AccountController(val studentService: StudentService, val tutorService: Tu
         emailService.sendMail(email, subject, text)
         return response(status = HttpStatus.OK, message = TASK_SUCCESSFUL)
     }
-
 }
